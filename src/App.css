@@ -1,32 +1,127 @@
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
+  display: grid;
+  min-height: 100vh;
+  grid-template-areas:
+    'header'
+    'fretboard'
+    'quiz'
+  ;
+  grid-template-rows: auto minmax(auto, 30vh) 1fr;
+  grid-template-columns: 1fr;
+  grid-gap: 24px;
+  padding: 24px;
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  grid-area: header;
+}
+
+.App-fretboard {
+  grid-area: fretboard;
+  background: linear-gradient(to bottom, #493b19 0%,#331d0c 100%);
+  display: grid;
+  min-height: 200px;
+}
+
+.fret {
+  border-right: 3px solid #CCC;
+  position: relative;
+}
+
+.bridge {
+  background-color: #222;
+  border-right: 4px solid #DDD;  
+}
+
+.dot {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #888;
+  position: absolute;
+  left: calc(50% - 10px);
+}
+
+.dot.single {
+  top: calc(50% - 10px);
+}
+
+.dot.double1 {
+  top: calc(25% - 10px);
+}
+
+.dot.double2 {
+  top: calc(75% - 10px);
+}
+
+.string {
+  z-index: 10;
+}
+
+.note {
+  z-index: 20;
+  display: block;
+  align-self: center;
+  justify-self: center;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.root-note.excluded {
+  background-color: red;
+}
+
+.root-note.included {
+  background-color: green;
+}
+
+.question-note {
+  background-color: lightBlue;
+  z-index: 30;
+}
+
+.indicator-note {
+  background-color: lightgrey;
+}
+
+.App-question {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.App-answer-field {
+  width: 30vw;
+  font-size: 24px;
+  padding: 12px;
+  border: 1px solid #CCC;
+  border-radius: 8px; 
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
+@keyframes bgToGray {
   to {
-    transform: rotate(360deg);
+    background-color: lightgray;
   }
+}
+
+.App-judgement {
+  animation-name: bgToGray;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+  margin-top: 24px;
+  padding: 16px;
+  font-size: 24px;
+}
+
+.App-judgement.correct {
+  background-color: green;
+}
+
+.App-judgement.incorrect {
+  background-color: red;
 }
