@@ -18,14 +18,23 @@
 
 .App-fretboard {
   grid-area: fretboard;
-  background: linear-gradient(to bottom, #493b19 0%,#331d0c 100%);
   display: grid;
   min-height: 200px;
+}
+
+.fingerboard {
+  background: linear-gradient(to bottom, #493b19 0%,#331d0c 100%);
 }
 
 .fret {
   border-right: 3px solid #CCC;
   position: relative;
+}
+
+.fret-number {
+  display: block;
+  justify-self: center;
+  margin: 6px;
 }
 
 .bridge {
@@ -59,6 +68,15 @@
   z-index: 10;
 }
 
+.root-note {
+  padding: 0 6px 0 12px;
+  align-self: center;
+}
+
+.root-note.excluded {
+  color: #CCC; 
+}
+
 .note {
   z-index: 20;
   display: block;
@@ -72,20 +90,12 @@
   justify-content: center;
 }
 
-.root-note.excluded {
-  background-color: red;
-}
-
-.root-note.included {
-  background-color: green;
-}
-
-.question-note {
+.note.question {
   background-color: lightBlue;
   z-index: 30;
 }
 
-.indicator-note {
+.note.indicator {
   background-color: lightgrey;
 }
 

@@ -1,40 +1,38 @@
 import React from 'react';
-import { noteNames } from './const';
 
 const MAX_STRING_WIDTH = 3;
 
 export const computeStrings = (tuning) => {
   const strings = [];
 
-  for (let i = 0; i < tuning.length; i++) {
+  for (let i = 0; i < tuning.notes.length; i++) {
     strings[i] = {
-      rootNote: tuning[i],
-      includeInQuiz: true,
+      rootNote: tuning.notes[i],
       num: i,
-      style: {
-        gridArea: `${ i + 1 } / 1 / ${ i + 1 } / -1`,
-        height: '50%',
-        borderBottom: `${ Math.max(1, Math.round(((i + 1) / tuning.length) * MAX_STRING_WIDTH)) }px solid yellow`
-      }
+      width: Math.max(1, Math.round(((i + 1) / tuning.notes.length) * MAX_STRING_WIDTH))
     }
   }
 
   return strings;
 }
 
-export default ({includeInQuiz, rootNote, num, style, onToggle }) => {
+export default ({includeInQuiz, rootNote, num, width, onToggle }) => {
   return <>
     <div
       key={ num }
       onClick={onToggle}
-      className={'note root-note ' + (includeInQuiz ? 'included' : 'excluded')}
+      className={'root-note ' + (includeInQuiz ? 'included' : 'excluded')}
       style={{
-        gridArea: `${ num + 1 } / 1`
+        gridArea: `${ num + 2 } / -1`
       }}
-    >{ noteNames[rootNote][0] }</div>
+    >{ rootNote.letter }</div>
     <div
       className="string"
-      style = { style }
+      style = {{
+        height: '50%',
+        gridArea: `${ num + 2 } / 1 / ${ num + 2 } / -1`,
+        borderBottom: `${ width }px solid yellow`
+      }}
     ></div>
   </>
 }

@@ -10,8 +10,9 @@ export const computeFrets = (fretCount) => {
   
     frets[i] = {
       size: size,
+      num: i,
       style: {
-        gridArea: `1 / ${ i + 2 } / -1 / ${ i + 2 }`
+        gridArea: `2 / ${ i + 2 } / -1 / ${ i + 2 }`
       },
       dots: 0
     }
@@ -27,17 +28,27 @@ export const computeFrets = (fretCount) => {
   return frets;
 }
 
-export default ({style, dots}) =>
-  <div
-    className="fret"
-    style={ style }
-  >
-    {
-      dots === 1 ? <span className="dot single"></span> : null
-    }
-    {
-      dots === 2 ? <>
-        <span className="dot double1"></span><span className="dot double2"></span>
-      </> : null
-    }
-  </div>;
+export default ({num, style, dots}) =>
+  <>
+    <span
+      className="fret-number"
+      style={{
+        gridArea: `1 / ${ num + 2 }`
+      }}
+    >
+      { num + 1 }
+    </span>
+    <div
+      className="fret"
+      style={ style }
+    >
+      {
+        dots === 1 ? <span className="dot single"></span> : null
+      }
+      {
+        dots === 2 ? <>
+          <span className="dot double1"></span><span className="dot double2"></span>
+        </> : null
+      }
+    </div>
+  </>;
