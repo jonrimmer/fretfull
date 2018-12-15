@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/guitar-quiz/precache-manifest.3b80df91a751a62e2dbea092f40c1ab5.js"
+  "/guitar-quiz/precache-manifest.a4b3f56efecd96039676e5351f9f1873.js"
 );
 
 workbox.clientsClaim();
