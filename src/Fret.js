@@ -11,9 +11,6 @@ export const computeFrets = (fretCount) => {
     frets[i] = {
       size: size,
       num: i,
-      style: {
-        gridArea: `2 / ${ i + 2 } / -1 / ${ i + 2 }`
-      },
       dots: 0
     }
   
@@ -33,14 +30,16 @@ export default ({num, style, dots}) =>
     <span
       className="fret-number"
       style={{
-        gridArea: `1 / ${ num + 2 }`
+        gridArea: `top / f${num}`
       }}
     >
       { num + 1 }
     </span>
     <div
       className="fret"
-      style={ style }
+      style={{
+        gridArea: `top-edge / f${num} / bottom-edge / f${num + 1}`
+      }}
     >
       {
         dots === 1 ? <span className="dot single"></span> : null

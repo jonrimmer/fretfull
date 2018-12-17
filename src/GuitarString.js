@@ -1,21 +1,5 @@
 import React from 'react';
 
-const MAX_STRING_WIDTH = 3;
-
-export const computeStrings = (tuning) => {
-  const strings = [];
-
-  for (let i = 0; i < tuning.notes.length; i++) {
-    strings[i] = {
-      rootNote: tuning.notes[i],
-      num: i,
-      width: Math.max(1, Math.round(((i + 1) / tuning.notes.length) * MAX_STRING_WIDTH))
-    }
-  }
-
-  return strings;
-}
-
 export default ({includeInQuiz, rootNote, num, width, onToggle }) => {
   return <>
     <div
@@ -23,14 +7,14 @@ export default ({includeInQuiz, rootNote, num, width, onToggle }) => {
       onClick={onToggle}
       className={'root-note ' + (includeInQuiz ? 'included' : 'excluded')}
       style={{
-        gridArea: `${ num + 2 } / -1`
+        gridArea: `s${ num + 1 } / fretboard-end`
       }}
     >{ rootNote.letter }</div>
     <div
       className="string"
       style = {{
         height: '50%',
-        gridArea: `${ num + 2 } / 1 / ${ num + 2 } / -1`,
+        gridArea: `s${ num } / head / s${ num + 1 } / fretboard-end`,
         borderBottom: `${ width }px solid yellow`
       }}
     ></div>

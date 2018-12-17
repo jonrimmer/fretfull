@@ -87,5 +87,10 @@ export const TUNINGS = [
     notes: [
       'E2', 'A2', 'C#3', 'E3', 'A3', 'E4'
     ].map(parseSpn)
+  }, {
+    name: 'Open B',
+    notes: [
+      'B2', 'F#2', 'B3', 'F#3', 'B3', 'D#4'
+    ].map(parseSpn)
   }
 ];

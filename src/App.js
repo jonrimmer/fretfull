@@ -1,21 +1,31 @@
 import React, { useState, useMemo } from 'react';
 import Fret, { computeFrets} from './Fret';
-import GuitarString, { computeStrings } from './GuitarString';
+import GuitarString from './GuitarString';
 import './App.css';
 import { TUNINGS, addSemitones, letterEquals } from './music';
-import { newBoolArray } from './util';
+import { newBoolArray, getRandomInt, tmap } from './util';
 
-const bridgeSize = 100;
+const headSize = 100;
+const MAX_STRING_WIDTH = 3;
 
-const positionToNote = (string, fret) => {
-  return addSemitones(string.rootNote, fret).letter;
+const posToGrid = (string, fret) => `s${ string + 1 } / span 1 / s${string + 1} / f${ fret }`;
+
+export function gridColumns(frets) {
+  return '[start] auto [head] ' + headSize  + 'px ' + 
+    tmap(frets, (f, i, { first, last }) =>
+      (first ? '[nut f0] ' : '') +
+      f.size + 'fr' +
+      ' [f' + (i + 1) + (last ? ' fretboard-end]' : ']')
+    ).join(' ') + ' auto [end]'
 }
 
-function getRandomInt(max) {
-  return Math.floor(Math.random() * Math.floor(max));
+export function gridRows(tuning) {
+  const l = tuning.notes.length;
+  return '[top] auto ' +
+    tmap(tuning.notes, (note, i, { first, last, length}) =>
+      (first ? '[top-edge ' : '[') + 's' + (l - i) + '] 1fr'
+    ).join(' ') + ' [bottom-edge s0]'
 }
-
-const posToGrid = (string, fret) => (string.num + 2) + ' / ' + (fret + 1);
 
 const App = () => {
   const frets = useMemo(() => computeFrets(12), []);
@@ -25,23 +35,15 @@ const App = () => {
   const [answer, setAnswer] = useState('');
   const [includedStrings, setIncludedStrings] = useState(newBoolArray(tuning.notes.length));
 
-  const strings = useMemo(
-    () => computeStrings(tuning, includedStrings),
-    [tuning, includedStrings]
-  );
+  const computeRandomQuestion = (includedStrings) => ({
+    type: 'note',
+    string: getRandomInt(includedStrings.filter(incl => incl).length),
+    fret: getRandomInt(frets.length)
+  });
 
-  const computeRandomQuestion = (includedStrings) => {
-    let validStrings = strings.filter((_s, i) => includedStrings[i]);
-    const strNum = getRandomInt(validStrings.length);
-    const string = validStrings[strNum];
-    const fretNum = getRandomInt(frets.length);
-  
-    return {
-      type: 'note',
-      answer: positionToNote(string, fretNum),
-      string,
-      fret: fretNum
-    };
+  const positionToNote = (string, fret) => {
+    const rootNote = tuning.notes[tuning.notes.length - (string + 1)];
+    return addSemitones(rootNote, fret).letter;
   }
 
   const [question, setQuestion] = useState(() => 
@@ -51,9 +53,8 @@ const App = () => {
   const allNotes = useMemo(() => {
     const result = [];
 
-    for (let string of strings) {
+    for (let string = 0; string < tuning.notes.length; string++) {
       for (let fret = 0; fret < frets.length + 1; fret++) {
-
         result.push({
           cssClass: 'indicator',
           label: positionToNote(string, fret),
@@ -79,6 +80,7 @@ const App = () => {
   }
 
   const handleSubmit = event => {
+
     if (letterEquals(question.answer, answer)) {
       setQuestion(computeRandomQuestion());
       
@@ -112,7 +114,7 @@ const App = () => {
       setQuestion(computeRandomQuestion(value));
     }
   };
-
+  
   return (
     <div className="App">
       <header className="App-header">
@@ -150,21 +152,21 @@ const App = () => {
       <div
         className="App-fretboard"
         style={{
-          gridTemplateColumns: `${ bridgeSize }px ${ frets.map(f => f.size + 'fr').join(' ') }`,
-          gridTemplateRows: 'auto ' + strings.map(() => '1fr').join(' ') + ' auto'
+          gridTemplateColumns: gridColumns(frets),
+          gridTemplateRows: gridRows(tuning)
         }}
       >
         <div
-          className="bridge"
+          className="head"
           style={{
-            gridArea: `2 / 1 / -1 / 2`
+            gridArea: `top-edge / head / bottom-edge / nut`
           }}
         >
         </div>
         <div
           className="fingerboard"
           style={{
-            gridArea: `2 / 2 / -1 / -1`
+            gridArea: `top-edge / nut / bottom-edge / fretboard-end`
           }}
         ></div>
 
@@ -187,12 +189,14 @@ const App = () => {
         }
         
         {
-          strings.map((str, i ) =>
+          tuning.notes.map((rootNote, i, { length } ) =>
             <GuitarString
               key={i}
+              num={i}
               onToggle={() => toggleGuitarString(i)}
               includeInQuiz={includedStrings[i]}
-              {...str}
+              rootNote={rootNote}
+              width={ Math.max(1, Math.round(((length - (i + 1)) / length) * MAX_STRING_WIDTH)) }
             ></GuitarString>
           )
         }
