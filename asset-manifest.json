@@ -1,13 +1,13 @@
 {
-  "main.css": "/guitar-quiz/static/css/main.2ce5974f.chunk.css",
-  "main.js": "/guitar-quiz/static/js/main.cb3f9af9.chunk.js",
-  "main.js.map": "/guitar-quiz/static/js/main.cb3f9af9.chunk.js.map",
+  "main.css": "/guitar-quiz/static/css/main.9e8ff9f1.chunk.css",
+  "main.js": "/guitar-quiz/static/js/main.872cecb8.chunk.js",
+  "main.js.map": "/guitar-quiz/static/js/main.872cecb8.chunk.js.map",
   "static/js/1.f74d6d06.chunk.js": "/guitar-quiz/static/js/1.f74d6d06.chunk.js",
   "static/js/1.f74d6d06.chunk.js.map": "/guitar-quiz/static/js/1.f74d6d06.chunk.js.map",
   "runtime~main.js": "/guitar-quiz/static/js/runtime~main.9321c1a2.js",
   "runtime~main.js.map": "/guitar-quiz/static/js/runtime~main.9321c1a2.js.map",
-  "static/css/main.2ce5974f.chunk.css.map": "/guitar-quiz/static/css/main.2ce5974f.chunk.css.map",
+  "static/css/main.9e8ff9f1.chunk.css.map": "/guitar-quiz/static/css/main.9e8ff9f1.chunk.css.map",
   "index.html": "/guitar-quiz/index.html",
-  "precache-manifest.a4b3f56efecd96039676e5351f9f1873.js": "/guitar-quiz/precache-manifest.a4b3f56efecd96039676e5351f9f1873.js",
+  "precache-manifest.cf37968ee0fa52845e6df633fe9b2ff9.js": "/guitar-quiz/precache-manifest.cf37968ee0fa52845e6df633fe9b2ff9.js",
   "service-worker.js": "/guitar-quiz/service-worker.js"
 }

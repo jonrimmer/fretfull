@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "cb3f9af9207be8d638b3",
-    "url": "/guitar-quiz/static/css/main.2ce5974f.chunk.css"
+    "revision": "872cecb8b3b7e36e85c4",
+    "url": "/guitar-quiz/static/css/main.9e8ff9f1.chunk.css"
   },
   {
-    "revision": "cb3f9af9207be8d638b3",
-    "url": "/guitar-quiz/static/js/main.cb3f9af9.chunk.js"
+    "revision": "872cecb8b3b7e36e85c4",
+    "url": "/guitar-quiz/static/js/main.872cecb8.chunk.js"
   },
   {
     "revision": "f74d6d06b89b99ffda06",
@@ -16,7 +16,7 @@ self.__precacheManifest = [
     "url": "/guitar-quiz/static/js/runtime~main.9321c1a2.js"
   },
   {
-    "revision": "4bae666b5dd8f92941dfcad00909ee78",
+    "revision": "552ded63b55c9581210dd534bce22232",
     "url": "/guitar-quiz/index.html"
   }
 ];
