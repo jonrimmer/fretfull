@@ -1,3 +1,7 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 .App {
   display: grid;
   min-height: 100vh;
@@ -6,7 +10,7 @@
     'fretboard'
     'quiz'
   ;
-  grid-template-rows: auto minmax(auto, 30vh) 1fr;
+  grid-template-rows: auto auto 1fr;
   grid-template-columns: 1fr;
   grid-gap: 24px;
   padding: 24px;
@@ -96,7 +100,8 @@
 }
 
 .note.indicator {
-  background-color: lightgrey;
+  background-color: #FFF;
+  font-weight: bold;
 }
 
 .App-question {

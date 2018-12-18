@@ -23,7 +23,7 @@ export function gridRows(tuning) {
   const l = tuning.notes.length;
   return '[top] auto ' +
     tmap(tuning.notes, (note, i, { first, last, length}) =>
-      (first ? '[top-edge ' : '[') + 's' + (l - i) + '] 1fr'
+      (first ? '[top-edge ' : '[') + 's' + (l - i) + '] 40px'
     ).join(' ') + ' [bottom-edge s0]'
 }
 
@@ -35,11 +35,21 @@ const App = () => {
   const [answer, setAnswer] = useState('');
   const [includedStrings, setIncludedStrings] = useState(newBoolArray(tuning.notes.length));
 
-  const computeRandomQuestion = (includedStrings) => ({
-    type: 'note',
-    string: getRandomInt(includedStrings.filter(incl => incl).length),
-    fret: getRandomInt(frets.length)
-  });
+  const computeRandomQuestion = (includedStrings) => {
+    const strings = includedStrings.reduce((acc, val, i) => {
+      if (val) {
+        acc.push(i);
+      }
+
+      return acc;
+    }, []);
+
+    return {
+      type: 'note',
+      string: strings[getRandomInt(strings.length)],
+      fret: getRandomInt(frets.length)
+    };
+  };
 
   const positionToNote = (string, fret) => {
     const rootNote = tuning.notes[tuning.notes.length - (string + 1)];
@@ -80,9 +90,11 @@ const App = () => {
   }
 
   const handleSubmit = event => {
+    // Done late in case the tuning has changed.
+    const solution = positionToNote(question.string, question.fret);
 
-    if (letterEquals(question.answer, answer)) {
-      setQuestion(computeRandomQuestion());
+    if (letterEquals(answer, solution)) {
+      setQuestion(computeRandomQuestion(includedStrings));
       
       setJudgement({
         correct: true,
@@ -106,11 +118,12 @@ const App = () => {
   }
 
   const toggleGuitarString = toToggle => {
+    debugger;
     let value = [...includedStrings];
     value[toToggle] = !value[toToggle];
     setIncludedStrings(value);
 
-    if (question.string.num === toToggle) {
+    if (question.string === toToggle) {
       setQuestion(computeRandomQuestion(value));
     }
   };

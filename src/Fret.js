@@ -2,7 +2,7 @@ import React from 'react';
 
 export const computeFrets = (fretCount) => {
   const frets = [];
-  let remainingSize = 200;
+  let remainingSize = 10;
 
   for (let i = 0; i < fretCount; i++) {
     const size = remainingSize / 17.817;
