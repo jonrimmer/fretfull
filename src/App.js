@@ -21,7 +21,7 @@ export function gridColumns(frets) {
 export function gridRows(tuning) {
   const l = tuning.notes.length;
   return '[top] auto ' +
-    tmap(tuning.notes, (note, i, { first, last, length}) =>
+    tmap(tuning.notes, (_note, i, { first }) =>
       (first ? '[top-edge ' : '[') + 's' + (l - i) + '] 40px'
     ).join(' ') + ' [bottom-edge s0]'
 }
