@@ -6,7 +6,6 @@ import { TUNINGS, addSemitones, letterEquals } from './music';
 import { newBoolArray, getRandomInt, tmap } from './util';
 
 const headSize = 100;
-const MAX_STRING_WIDTH = 3;
 
 const posToGrid = (string, fret) => `s${ string + 1 } / span 1 / s${string + 1} / f${ fret }`;
 
@@ -52,7 +51,7 @@ const App = () => {
   };
 
   const positionToNote = (string, fret) => {
-    const rootNote = tuning.notes[tuning.notes.length - (string + 1)];
+    const rootNote = tuning.notes[string];
     return addSemitones(rootNote, fret).letter;
   }
 
@@ -118,7 +117,6 @@ const App = () => {
   }
 
   const toggleGuitarString = toToggle => {
-    debugger;
     let value = [...includedStrings];
     value[toToggle] = !value[toToggle];
     setIncludedStrings(value);
@@ -131,37 +129,40 @@ const App = () => {
   return (
     <div className="App">
       <header className="App-header">
-        Guitar Quiz
+        Guitar Quiz    
+      </header>
+      <div className="App-options">
+        <label>
+          Mode
+        </label>
+        <label className="App-explore">
+          <input
+            type="radio"
+            value="explore"
+            checked={appMode === 'explore'}
+            onChange={() => setAppMode('explore')}
+          />
+            Explore
+        </label>
+        <label className="App-quiz">
+          <input
+            type="radio"
+            value="quiz"
+            checked={appMode === 'quiz'}
+            onChange={() => setAppMode('quiz')}
+          />
+          Quiz
+        </label>
 
-        <div className="App-options">
-          <label>
-            <input
-              type="radio"
-              value="explore"
-              checked={appMode === 'explore'}
-              onChange={() => setAppMode('explore')}
-            />
-              Explore
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="quiz"
-              checked={appMode === 'quiz'}
-              onChange={() => setAppMode('quiz')}
-            />
-            Quiz
-          </label>
-        </div>
-
+        <label className="App-tuning">Tuning</label>
         <select
+          className="App-tuning"
           value={tuning.name}
           onChange={handleTuningChanged}
         >
           { TUNINGS.map((tuning, i) => <option key={i}>{tuning.name}</option>)}
         </select>
-        
-      </header>
+      </div>
       <div
         className="App-fretboard"
         style={{
@@ -206,10 +207,10 @@ const App = () => {
             <GuitarString
               key={i}
               num={i}
+              count={length}
               onToggle={() => toggleGuitarString(i)}
               includeInQuiz={includedStrings[i]}
               rootNote={rootNote}
-              width={ Math.max(1, Math.round(((length - (i + 1)) / length) * MAX_STRING_WIDTH)) }
             ></GuitarString>
           )
         }

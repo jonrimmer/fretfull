@@ -7,10 +7,11 @@
   min-height: 100vh;
   grid-template-areas:
     'header'
+    'options'
     'fretboard'
     'quiz'
   ;
-  grid-template-rows: auto auto 1fr;
+  grid-template-rows: auto auto auto 1fr;
   grid-template-columns: 1fr;
   grid-gap: 24px;
   padding: 24px;
@@ -24,6 +25,34 @@
   grid-area: fretboard;
   display: grid;
   min-height: 200px;
+}
+
+.App-options {
+  grid-area: options;
+  justify-self: start;
+  display: grid;
+  grid-template: auto auto / auto auto auto;
+  grid-gap: 12px;
+}
+
+.App-mode {
+  grid-area: 1 / 1 / 1 / 2;
+}
+
+.App-explore {
+  grid-area: 2 / 1;
+}
+
+.App-quiz {
+  grid-area: 2 / 2;
+}
+
+label.App-tuning {
+  grid-area: 1 / 3;
+}
+
+select.App-tuning {
+  grid-area: 2 / 3;
 }
 
 .fingerboard {
@@ -92,16 +121,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: bold;
 }
 
 .note.question {
-  background-color: lightBlue;
+  background-color: #00fdff;
   z-index: 30;
 }
 
 .note.indicator {
   background-color: #FFF;
-  font-weight: bold;
 }
 
 .App-question {

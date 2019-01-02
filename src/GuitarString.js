@@ -1,6 +1,10 @@
 import React from 'react';
 
-export default ({includeInQuiz, rootNote, num, width, onToggle }) => {
+const MAX_STRING_WIDTH = 3;
+
+export default ({includeInQuiz, rootNote, num, count, onToggle }) => {
+  const width = Math.max(1, Math.round(((count - (num + 1)) / count) * MAX_STRING_WIDTH));
+  
   return <>
     <div
       key={ num }
