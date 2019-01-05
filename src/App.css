@@ -21,17 +21,11 @@
   grid-area: header;
 }
 
-.App-fretboard {
-  grid-area: fretboard;
-  display: grid;
-  min-height: 200px;
-}
-
 .App-options {
   grid-area: options;
   justify-self: start;
   display: grid;
-  grid-template: auto auto / auto auto auto;
+  grid-template: auto auto / auto auto auto auto;
   grid-gap: 12px;
 }
 
@@ -55,24 +49,8 @@ select.App-tuning {
   grid-area: 2 / 3;
 }
 
-.fingerboard {
-  background: linear-gradient(to bottom, #493b19 0%,#331d0c 100%);
-}
-
-.fret {
-  border-right: 3px solid #CCC;
-  position: relative;
-}
-
-.fret-number {
-  display: block;
-  justify-self: center;
-  margin: 6px;
-}
-
-.head {
-  background-color: #222;
-  border-right: 4px solid #DDD;  
+.App-show-octave {
+  grid-area: 2 / 4 / 2 / 4;
 }
 
 .dot {
@@ -108,29 +86,6 @@ select.App-tuning {
 
 .root-note.excluded {
   color: #CCC; 
-}
-
-.note {
-  z-index: 20;
-  display: block;
-  align-self: center;
-  justify-self: center;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-}
-
-.note.question {
-  background-color: #00fdff;
-  z-index: 30;
-}
-
-.note.indicator {
-  background-color: #FFF;
 }
 
 .App-question {

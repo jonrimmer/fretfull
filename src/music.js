@@ -33,6 +33,21 @@ const NUM_TO_LETTER = [
   'B'
 ];
 
+class Note {
+  constructor(letter, octave) {
+    this.letter = letter;
+    this.octave = octave;
+  }
+
+  toString() {
+    return this.letter;
+  }
+
+  toSpn() {
+    return this.letter + this.octave;
+  }
+}
+
 export function letterEquals(a, b) {
   return LETTER_TO_NUM.hasOwnProperty(a) &&
     LETTER_TO_NUM.hasOwnProperty(b) &&
@@ -40,17 +55,16 @@ export function letterEquals(a, b) {
 }
 
 export function parseSpn(spn) {
-  if (spn.length === 3) {
-    return {
-      letter: spn[0] + spn[1],
-      octave: parseInt(spn[2])
-    };
+  if (typeof spn !== 'string') {
+    // This lets us safely call parseSpn on things that might already be note objects.
+    return spn;
   }
 
-  return {
-    letter: spn[0],
-    octave: parseInt(spn[1])
-  };
+  if (spn.length === 3) {
+    return new Note(spn[0] + spn[1], parseInt(spn[2]));
+  }
+
+  return new Note(spn[0], parseInt(spn[1]));
 }
 
 export function addSemitones(note, semitones) {
@@ -70,10 +84,10 @@ export function addSemitones(note, semitones) {
 
   octave += (semitones / 12) | 0;
 
-  return {
-    letter: NUM_TO_LETTER[letter],
+  return new Note(
+    NUM_TO_LETTER[letter],
     octave
-  };
+  );
 }
 
 class Tuning {
@@ -112,3 +126,68 @@ export const TUNINGS = [
     'D2', 'G2', 'D3', 'G3', 'B3', 'D4'
   ])
 ];
+
+export const INTERVALS = {
+  Unison: 0,
+  MinorSecond: 1,
+  MajorSecond: 2,
+  MinorThird: 3,
+  MajorThird: 4,
+  PerfectFourth: 5,
+  PerfectFifth: 7,
+  MinorSixth: 8,
+  MajorSixth: 9,
+  MinorSeventh: 11,
+  Ocatve: 12
+}
+
+export const CHORD_QUALITY = {
+  Major: {
+    name: 'Major',
+    short: '',
+    long: 'maj'
+  },
+  Minor: {
+    name: 'Minor',
+    short: 'm',
+    long: 'min'
+  },
+  Augmented: {
+    name: 'Augmented',
+    short: '+',
+    long: 'aug'
+  },
+  Diminished: {
+    named: 'Diminished',
+    short: 'o'
+  }
+}
+
+class Chord {
+  constructor(quality, rootNote, intervals) {
+    this.quality = quality;
+    this.notes = [
+      rootNote,
+      ...intervals.map(i => addSemitones(rootNote, i))
+    ];
+  }
+
+  shortName() {
+    return this.notes[0].letter + this.quality.short;
+  }
+
+  longName() {
+    return this.notes[0].letter + this.quality.long;
+  }
+}
+
+export function majorChord(rootNote) {
+  rootNote = parseSpn(rootNote);
+  return new Chord(CHORD_QUALITY.Major, rootNote, [INTERVALS.MajorThird, INTERVALS.PerfectFifth]);
+}
+
+export function minorChord(rootNote) {
+  rootNote = parseSpn(rootNote);
+  return new Chord(CHORD_QUALITY.Minor, rootNote, [INTERVALS.MinorThird, INTERVALS.PerfectFifth]);
+}
+

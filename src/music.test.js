@@ -1,4 +1,4 @@
-import { parseSpn, addSemitones, letterEquals } from './music';
+import { parseSpn, addSemitones, letterEquals, majorChord, minorChord } from './music';
 
 describe('letterEquals', () => {
   it('should return true for identical letters and accidentals', () => {
@@ -49,4 +49,20 @@ describe('addSemitones', () => {
       octave: 3
     });
   })
+});
+
+describe('Chord', () => {
+  it('should construct major chords correctly', () => {
+    const c = majorChord('C3');
+    expect(c.shortName()).toEqual('C');
+    expect(c.longName()).toEqual('Cmaj');
+    expect(c.notes.join('-')).toEqual('C-E-G');
+  });
+
+  it('should construct minor chords correctly', () => {
+    const cmin = minorChord('C3');
+    expect(cmin.shortName()).toEqual('Cm');
+    expect(cmin.longName()).toEqual('Cmin');
+    expect(cmin.notes.join('-')).toEqual('C-D#-G');
+  });
 });

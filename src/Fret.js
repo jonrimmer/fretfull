@@ -1,4 +1,5 @@
 import React from 'react';
+import './Fret.css';
 
 export const computeFrets = (fretCount) => {
   const frets = [];
@@ -28,7 +29,7 @@ export const computeFrets = (fretCount) => {
 export default ({num, style, dots}) =>
   <>
     <span
-      className="fret-number"
+      className="Fret-number"
       style={{
         gridArea: `top / f${num}`
       }}
@@ -36,7 +37,7 @@ export default ({num, style, dots}) =>
       { num + 1 }
     </span>
     <div
-      className="fret"
+      className="Fret"
       style={{
         gridArea: `top-edge / f${num} / bottom-edge / f${num + 1}`
       }}

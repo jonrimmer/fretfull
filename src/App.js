@@ -1,30 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import Fret, { computeFrets} from './Fret';
+import { computeFrets} from './Fret';
 import GuitarString from './GuitarString';
 import './App.css';
-import { TUNINGS, addSemitones, letterEquals } from './music';
-import { newBoolArray, getRandomInt, tmap } from './util';
-
-const headSize = 100;
-
-const posToGrid = (string, fret) => `s${ string + 1 } / span 1 / s${string + 1} / f${ fret }`;
-
-export function gridColumns(frets) {
-  return '[start] auto [head] ' + headSize  + 'px ' + 
-    tmap(frets, (f, i, { first, last }) =>
-      (first ? '[nut f0] ' : '') +
-      f.size + 'fr' +
-      ' [f' + (i + 1) + (last ? ' fretboard-end]' : ']')
-    ).join(' ') + ' auto [end]'
-}
-
-export function gridRows(tuning) {
-  const l = tuning.notes.length;
-  return '[top] auto ' +
-    tmap(tuning.notes, (_note, i, { first }) =>
-      (first ? '[top-edge ' : '[') + 's' + (l - i) + '] 40px'
-    ).join(' ') + ' [bottom-edge s0]'
-}
+import { TUNINGS, addSemitones, letterEquals, majorChord } from './music';
+import { newBoolArray, getRandomInt } from './util';
+import Fretboard, { posToGrid } from './Fretboard';
+import Note from './Note';
 
 const App = () => {
   const frets = useMemo(() => computeFrets(12), []);
@@ -32,6 +13,9 @@ const App = () => {
   const [tuning, setTuning] = useState(TUNINGS[0]);
   const [judgement, setJudgement] = useState(null);
   const [answer, setAnswer] = useState('');
+  const [chordRoot, setChordRoot] = useState('A');
+  const [chordType, setChordType] = useState('Major');
+  const [showOctave, setShowOctave] = useState(true);
   const [includedStrings, setIncludedStrings] = useState(newBoolArray(tuning.notes.length));
 
   const computeRandomQuestion = (includedStrings) => {
@@ -52,7 +36,7 @@ const App = () => {
 
   const positionToNote = (string, fret) => {
     const rootNote = tuning.notes[string];
-    return addSemitones(rootNote, fret).letter;
+    return addSemitones(rootNote, fret)
   }
 
   const [question, setQuestion] = useState(() => 
@@ -65,27 +49,45 @@ const App = () => {
     for (let string = 0; string < tuning.notes.length; string++) {
       for (let fret = 0; fret < frets.length + 1; fret++) {
         result.push({
-          cssClass: 'indicator',
-          label: positionToNote(string, fret),
+          type: 'indicator',
+          note: positionToNote(string, fret),
           gridArea: posToGrid(string, fret)
         })
       }
     }
 
     return result;
-  }, [tuning]);
+  }, [tuning, showOctave]);
 
-  let noteIndicators = [];
+  let notes = [];
 
   if (appMode === 'quiz') {
-    noteIndicators.push({
-      label: '?',
-      cssClass: 'question',
+    notes.push({
+      note: positionToNote(question.string, question.fret),
+      type: 'quiz',
       gridArea: posToGrid(question.string, question.fret)
     })
   }
   else {
-    noteIndicators = allNotes;
+    // const chord = majorChord(chordRoot + '3');
+    // noteIndicators = [];
+
+    // let foundRoot = false;
+
+    // for (let i = 0; i < tuning.notes.length; i++) {
+    //   if (!foundRoot) {
+    //     if (letterEquals(tuning.notes[i].letter, chord.notes[0].letter)) {
+    //       foundRoot = true;
+    //       noteIndicators.push({
+    //         note: tuning.notes[i],
+    //         cssClass: 'indicator',
+    //         gridArea: posToGrid(0, 0)
+    //       })
+    //     }
+    //   }
+    // }
+
+    notes = allNotes;
   }
 
   const handleSubmit = event => {
@@ -162,46 +164,29 @@ const App = () => {
         >
           { TUNINGS.map((tuning, i) => <option key={i}>{tuning.name}</option>)}
         </select>
+
+        <label className="App-show-octave">
+          <input
+            type="checkbox"
+            checked={showOctave}
+            onChange={() => setShowOctave(!showOctave) }
+          /> Show octave
+        </label>
       </div>
-      <div
-        className="App-fretboard"
-        style={{
-          gridTemplateColumns: gridColumns(frets),
-          gridTemplateRows: gridRows(tuning)
-        }}
+      <Fretboard
+        frets={frets}
+        tuning={tuning}
       >
-        <div
-          className="head"
-          style={{
-            gridArea: `top-edge / head / bottom-edge / nut`
-          }}
-        >
-        </div>
-        <div
-          className="fingerboard"
-          style={{
-            gridArea: `top-edge / nut / bottom-edge / fretboard-end`
-          }}
-        ></div>
-
         {
-          noteIndicators.map(({gridArea, label, cssClass}, i) =>
-            <div
+          notes.map((note, i) =>
+            <Note
               key={i}
-              className={'note ' + cssClass}
-              style={{ gridArea }}
-            >
-              { label }
-            </div>
-           )
-        }
-
-        {
-          frets.map((fret, i) =>
-            <Fret key={i} {...fret}></Fret>
+              showOctave={showOctave}
+              {...note}
+            ></Note>
           )
         }
-        
+
         {
           tuning.notes.map((rootNote, i, { length } ) =>
             <GuitarString
@@ -214,7 +199,7 @@ const App = () => {
             ></GuitarString>
           )
         }
-      </div>
+      </Fretboard>
 
       {
         appMode === 'quiz' ? <form 
@@ -237,7 +222,26 @@ const App = () => {
                 { judgement.correct ? 'Correct' : 'Incorrect' }
               </div> : null
           }
-      </form> : null
+        </form> : <div className="chordSelector">
+          <select
+            className="App-chord-root"
+            value={chordRoot}
+            onChange={event => setChordRoot(event.target.value)}
+          >
+            <option>A</option>
+            <option>Bb</option>
+            <option>B</option>
+            <option>C</option>
+          </select>
+          <select
+            className="App-chord-type"
+            value={chordType}
+            onChange={event => setChordType(event.target.value)}
+          >
+            <option>Major</option>
+            <option>Minor</option>
+          </select>
+        </div>
       }
     </div>
   );
