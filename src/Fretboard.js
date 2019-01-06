@@ -1,17 +1,30 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { tmap } from './util';
 import './Fretboard.css';
 import Fret from './Fret';
 
 const headSize = 100;
 
-export const posToGrid = (string, fret) => `s${ string + 1 } / span 1 / s${string + 1} / f${ fret }`;
+export const positionToGridArea = (string, fret) => `s${ string + 1 } / span 1 / s${string + 1} / f${ fret }`;
+
+export const computeFretSizes = (fretCount) => {
+  const frets = [];
+  let remainingSize = 10;
+
+  for (let i = 0; i < fretCount; i++) {
+    const size = remainingSize / 17.817;
+    remainingSize = remainingSize - size;
+    frets.push(size);
+  }
+
+  return frets;
+}
 
 export function gridColumns(frets) {
   return '[start] auto [head] ' + headSize  + 'px ' + 
-    tmap(frets, (f, i, { first, last }) =>
+    tmap(frets, (size, i, { first, last }) =>
       (first ? '[nut f0] ' : '') +
-      f.size + 'fr' +
+      size + 'fr' +
       ' [f' + (i + 1) + (last ? ' fretboard-end]' : ']')
     ).join(' ') + ' auto [end]'
 }
@@ -24,12 +37,26 @@ export function gridRows(tuning) {
     ).join(' ') + ' [bottom-edge s0]'
 }
 
-export default function({ children, frets, tuning}) {
+export default function({children, fretCount, tuning}) {
+  const [
+    fretSizes,
+    columns,
+  ] = useMemo(() => {
+    const frets = computeFretSizes(fretCount);
+
+    return [
+      frets,
+      gridColumns(frets)
+    ]
+  }, [fretCount]);
+
+  const rows = useMemo(() => gridRows(tuning), [tuning]);
+
   return <div
     className="Fretboard"
     style={{
-      gridTemplateColumns: gridColumns(frets),
-      gridTemplateRows: gridRows(tuning)
+      gridTemplateColumns: columns,
+      gridTemplateRows: rows
     }}
   >
     <div
@@ -49,8 +76,12 @@ export default function({ children, frets, tuning}) {
     { children }
 
     {
-      frets.map((fret, i) =>
-        <Fret key={i} {...fret}></Fret>
+      fretSizes.map((size, i) =>
+        <Fret
+          key={i}
+          size={size}
+          num={i}
+        ></Fret>
       )
     }
   </div>

@@ -1,14 +1,14 @@
 import React, { useState, useMemo } from 'react';
-import { computeFrets} from './Fret';
 import GuitarString from './GuitarString';
 import './App.css';
 import { TUNINGS, addSemitones, letterEquals, majorChord } from './music';
 import { newBoolArray, getRandomInt } from './util';
-import Fretboard, { posToGrid } from './Fretboard';
+import Fretboard, { positionToGridArea } from './Fretboard';
 import Note from './Note';
 
+const fretCount = 12;
+
 const App = () => {
-  const frets = useMemo(() => computeFrets(12), []);
   const [appMode, setAppMode] = useState('explore');
   const [tuning, setTuning] = useState(TUNINGS[0]);
   const [judgement, setJudgement] = useState(null);
@@ -30,7 +30,7 @@ const App = () => {
     return {
       type: 'note',
       string: strings[getRandomInt(strings.length)],
-      fret: getRandomInt(frets.length)
+      fret: getRandomInt(fretCount)
     };
   };
 
@@ -47,11 +47,11 @@ const App = () => {
     const result = [];
 
     for (let string = 0; string < tuning.notes.length; string++) {
-      for (let fret = 0; fret < frets.length + 1; fret++) {
+      for (let fret = 0; fret < fretCount + 1; fret++) {
         result.push({
           type: 'indicator',
           note: positionToNote(string, fret),
-          gridArea: posToGrid(string, fret)
+          gridArea: positionToGridArea(string, fret)
         })
       }
     }
@@ -65,7 +65,7 @@ const App = () => {
     notes.push({
       note: positionToNote(question.string, question.fret),
       type: 'quiz',
-      gridArea: posToGrid(question.string, question.fret)
+      gridArea: positionToGridArea(question.string, question.fret)
     })
   }
   else {
@@ -174,7 +174,7 @@ const App = () => {
         </label>
       </div>
       <Fretboard
-        frets={frets}
+        fretCount={fretCount}
         tuning={tuning}
       >
         {

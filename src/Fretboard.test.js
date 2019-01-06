@@ -2,13 +2,7 @@ import { gridColumns, gridRows} from './Fretboard';
 
 describe('gridColumns', () => {
   it('should return the correct columns', () => {
-    expect(gridColumns([{
-      size: 3
-    }, {
-      size: 2
-    }, {
-      size: 1
-    }])).toEqual(
+    expect(gridColumns([3, 2, 1])).toEqual(
       `[start] auto [head] 100px [nut f0] 3fr [f1] 2fr [f2] 1fr [f3 fretboard-end] auto [end]`
     )
   });
