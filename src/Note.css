@@ -22,5 +22,9 @@
 }
 
 .Note-indicator {
-  background-color: #FFF;
+  background-color: #75ced8;
+}
+
+.Note-chord-root {
+  background-color: rgb(66, 201, 97);
 }

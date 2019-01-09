@@ -1,4 +1,4 @@
-const LETTER_TO_NUM = {
+export const LETTER_TO_NUM = {
   'C': 0,
   'C#': 1,
   'Db': 1,
@@ -18,7 +18,7 @@ const LETTER_TO_NUM = {
   'B': 11
 };
 
-const NUM_TO_LETTER = [
+export const NUM_TO_LETTER = [
   'C',
   'C#',
   'D',
@@ -34,17 +34,17 @@ const NUM_TO_LETTER = [
 ];
 
 class Note {
-  constructor(letter, octave) {
-    this.letter = letter;
+  constructor(tone, octave) {
+    this.tone = tone;
     this.octave = octave;
   }
 
   toString() {
-    return this.letter;
+    return this.tone;
   }
 
   toSpn() {
-    return this.letter + this.octave;
+    return this.tone + this.octave;
   }
 }
 
@@ -67,33 +67,50 @@ export function parseSpn(spn) {
   return new Note(spn[0], parseInt(spn[1]));
 }
 
+export function interval(note, tone) {
+  let start = LETTER_TO_NUM[parseSpn(note).tone]; // 9
+  let end = LETTER_TO_NUM[tone]; // 0
+
+  let result = end - start;
+
+  if (result < 0) {
+    result += 12;
+  }
+
+  return result;
+}
+
 export function addSemitones(note, semitones) {
-  const num = LETTER_TO_NUM[note.letter];
+  const num = LETTER_TO_NUM[note.tone];
 
   let octave = note.octave;
-  let letter = num + (semitones % 12);
+  let tone = num + (semitones % 12);
 
-  if (letter < 0) {
-    letter += 12;
+  if (tone < 0) {
+    tone += 12;
     octave--;
   }
-  else if (letter >= 12) {
-    letter -= 12;
+  else if (tone >= 12) {
+    tone -= 12;
     octave++;
   }
 
   octave += (semitones / 12) | 0;
 
   return new Note(
-    NUM_TO_LETTER[letter],
+    NUM_TO_LETTER[tone],
     octave
   );
 }
 
-class Tuning {
+export class Tuning {
   constructor(name, notes) {
     this.name = name;
     this.notes = notes.map(parseSpn);
+  }
+
+  toString() {
+    return this.notes.join('-');
   }
 }
 
@@ -173,11 +190,15 @@ class Chord {
   }
 
   shortName() {
-    return this.notes[0].letter + this.quality.short;
+    return this.notes[0].tone + this.quality.short;
   }
 
   longName() {
-    return this.notes[0].letter + this.quality.long;
+    return this.notes[0].tone + this.quality.long;
+  }
+
+  get rootNote() {
+    return this.notes[0];
   }
 }
 

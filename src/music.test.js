@@ -1,4 +1,4 @@
-import { parseSpn, addSemitones, letterEquals, majorChord, minorChord } from './music';
+import { parseSpn, addSemitones, letterEquals, majorChord, minorChord, distanceForwards, interval } from './music';
 
 describe('letterEquals', () => {
   it('should return true for identical letters and accidentals', () => {
@@ -27,7 +27,7 @@ describe('letterEquals', () => {
 describe('parseSpn', () => {
   it('parses scientific note notation', () => {
     expect(parseSpn('A#4')).toEqual({
-      letter: 'A#',
+      tone: 'A#',
       octave: 4
     })
   });
@@ -38,14 +38,14 @@ describe('addSemitones', () => {
 
   it('should correctly modify the letter and octave', () => {
     expect(addSemitones(original, 13)).toEqual({
-      letter: 'C#',
+      tone: 'C#',
       octave: 5
     });
   })
 
   it('should handle negative values', () => {
     expect(addSemitones(original, -1)).toEqual({
-      letter: 'B',
+      tone: 'B',
       octave: 3
     });
   })
@@ -64,5 +64,19 @@ describe('Chord', () => {
     expect(cmin.shortName()).toEqual('Cm');
     expect(cmin.longName()).toEqual('Cmin');
     expect(cmin.notes.join('-')).toEqual('C-D#-G');
+  });
+});
+
+describe('interval', () => {
+  it('should return 0 for the same note', () =>{
+    expect(interval(parseSpn('C3'), 'C')).toEqual(0);
+  });
+
+  it('should work for notes later in the octave', () => {
+    expect(interval(parseSpn('C3'), 'F')).toEqual(5);
+  })
+
+  it('should work for notes earlier in the octave', () => {
+    expect(interval(parseSpn('A3'), 'C')).toEqual(3);
   });
 });

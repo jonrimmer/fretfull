@@ -13,7 +13,7 @@ export default ({includeInQuiz, rootNote, num, count, onToggle }) => {
       style={{
         gridArea: `s${ num + 1 } / fretboard-end`
       }}
-    >{ rootNote.letter }</div>
+    >{ rootNote.tone }</div>
     <div
       className="string"
       style = {{

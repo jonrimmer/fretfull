@@ -3,7 +3,8 @@ import './Note.css';
 
 const typeClass = {
   quiz: 'Note-quiz',
-  indicator: 'Note-indicator'
+  indicator: 'Note-indicator',
+  chordRoot: 'Note-chord-root'
 };
 
 export default function({ note, type, showOctave, gridArea }) {
@@ -14,7 +15,7 @@ export default function({ note, type, showOctave, gridArea }) {
     label = '?'
   }
   else {
-    label = <span>{ note.letter }{ showOctave ? <sub>{ note.octave }</sub>: null }</span>
+    label = <span>{ note.tone }{ showOctave ? <sub>{ note.octave }</sub>: null }</span>
   }
 
   return <div

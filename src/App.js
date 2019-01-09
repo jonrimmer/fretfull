@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import GuitarString from './GuitarString';
 import './App.css';
-import { TUNINGS, addSemitones, letterEquals, majorChord } from './music';
+import { TUNINGS, addSemitones, letterEquals, majorChord, minorChord } from './music';
 import { newBoolArray, getRandomInt } from './util';
 import Fretboard, { positionToGridArea } from './Fretboard';
 import Note from './Note';
+import { Voicings } from './voicing';
 
 const fretCount = 12;
 
@@ -17,6 +18,9 @@ const App = () => {
   const [chordType, setChordType] = useState('Major');
   const [showOctave, setShowOctave] = useState(true);
   const [includedStrings, setIncludedStrings] = useState(newBoolArray(tuning.notes.length));
+  const voicings = useMemo(() => new Voicings(fretCount));
+  const [notes, setNotes] = useState([]);
+  const [voicingIndex, setVoicingIndex] = useState(0);
 
   const computeRandomQuestion = (includedStrings) => {
     const strings = includedStrings.reduce((acc, val, i) => {
@@ -59,37 +63,6 @@ const App = () => {
     return result;
   }, [tuning, showOctave]);
 
-  let notes = [];
-
-  if (appMode === 'quiz') {
-    notes.push({
-      note: positionToNote(question.string, question.fret),
-      type: 'quiz',
-      gridArea: positionToGridArea(question.string, question.fret)
-    })
-  }
-  else {
-    // const chord = majorChord(chordRoot + '3');
-    // noteIndicators = [];
-
-    // let foundRoot = false;
-
-    // for (let i = 0; i < tuning.notes.length; i++) {
-    //   if (!foundRoot) {
-    //     if (letterEquals(tuning.notes[i].letter, chord.notes[0].letter)) {
-    //       foundRoot = true;
-    //       noteIndicators.push({
-    //         note: tuning.notes[i],
-    //         cssClass: 'indicator',
-    //         gridArea: posToGrid(0, 0)
-    //       })
-    //     }
-    //   }
-    // }
-
-    notes = allNotes;
-  }
-
   const handleSubmit = event => {
     // Done late in case the tuning has changed.
     const solution = positionToNote(question.string, question.fret);
@@ -127,6 +100,69 @@ const App = () => {
       setQuestion(computeRandomQuestion(value));
     }
   };
+
+  const showVoicing = index => {
+    const chord = chordType == 'Major' ? majorChord(chordRoot + '3') : minorChord(chordRoot + '3');
+    const chordVoicings = voicings.getVoicings(tuning, chord).root;
+
+    if (index < 0) {
+      index = 0;
+    }
+    else if (index >= chordVoicings.length) {
+      index = chordVoicings.length - 1;
+    }
+
+    const played = [];
+
+    chordVoicings[index].notes.forEach((fret, string) => {
+      let note = addSemitones(tuning.notes[string], fret);
+      if (fret !== null) {
+        played.push({
+          type: note.tone === chord.rootNote.tone ? 'chordRoot' : 'indicator',
+          note,
+          gridArea: positionToGridArea(string, fret)
+        });
+      }
+    });
+
+    setNotes(played);
+    setVoicingIndex(index);
+  }
+
+  const showChord = () => {
+    showVoicing(0);
+  };
+
+  const nextVoicing = () => {
+    showVoicing(voicingIndex + 1);
+  }
+
+  const prevVoicing = () => {
+    showVoicing(voicingIndex - 1);
+  }
+
+  const firstVoicing = () => {
+    showVoicing(Number.NEGATIVE_INFINITY);
+  }
+
+  const lastVoicing = () => {
+    showVoicing(Number.POSITIVE_INFINITY);
+  }
+
+  const switchAppMode = mode => {
+    setAppMode(mode);
+
+    if (mode === 'quiz') {
+      setNotes([{
+        note: positionToNote(question.string, question.fret),
+        type: 'quiz',
+        gridArea: positionToGridArea(question.string, question.fret)
+      }]);
+    }
+    else {
+      setNotes(allNotes);
+    }
+  }
   
   return (
     <div className="App">
@@ -142,7 +178,7 @@ const App = () => {
             type="radio"
             value="explore"
             checked={appMode === 'explore'}
-            onChange={() => setAppMode('explore')}
+            onChange={() => switchAppMode('explore')}
           />
             Explore
         </label>
@@ -229,9 +265,17 @@ const App = () => {
             onChange={event => setChordRoot(event.target.value)}
           >
             <option>A</option>
-            <option>Bb</option>
+            <option>A#</option>
             <option>B</option>
             <option>C</option>
+            <option>C#</option>
+            <option>D</option>
+            <option>D#</option>
+            <option>E</option>
+            <option>F</option>
+            <option>F#</option>
+            <option>G</option>
+            <option>G#</option>
           </select>
           <select
             className="App-chord-type"
@@ -241,6 +285,11 @@ const App = () => {
             <option>Major</option>
             <option>Minor</option>
           </select>
+          <button onClick={showChord}>Chord</button>
+          <button onClick={firstVoicing}>|&lt;</button>
+          <button onClick={prevVoicing}>&lt;</button>
+          <button onClick={nextVoicing}>&gt;</button>
+          <button onClick={lastVoicing}>&gt;|</button>
         </div>
       }
     </div>
