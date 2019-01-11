@@ -1,29 +1,48 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, FormEvent, SyntheticEvent } from 'react';
 import GuitarString from './GuitarString';
 import './App.css';
-import { TUNINGS, addSemitones, letterEquals, majorChord, minorChord } from './music';
+import { TUNINGS, addSemitones, letterEquals as toneEquals, majorChord, minorChord, Note } from './music';
 import { newBoolArray, getRandomInt } from './util';
 import Fretboard, { positionToGridArea } from './Fretboard';
-import Note from './Note';
+import NoteIndicator from './NoteIndicator';
 import { Voicings } from './voicing';
 
 const fretCount = 12;
 
+interface Judgement {
+  correct: boolean;
+  id: number;
+}
+
+interface Question {
+  type: string;
+  string: number;
+  fret: number;
+}
+
+interface Indicator {
+  type: 'quiz' | 'indicator' | 'chordRoot';
+  note: Note;
+  gridArea: string;
+}
+
+type AppMode = 'quiz' | 'explore';
+
 const App = () => {
-  const [appMode, setAppMode] = useState('explore');
+  const [appMode, setAppMode] = useState<AppMode>('explore');
   const [tuning, setTuning] = useState(TUNINGS[0]);
-  const [judgement, setJudgement] = useState(null);
+  const [judgement, setJudgement] = useState<Judgement | null>(null);
   const [answer, setAnswer] = useState('');
   const [chordRoot, setChordRoot] = useState('A');
   const [chordType, setChordType] = useState('Major');
   const [showOctave, setShowOctave] = useState(true);
   const [includedStrings, setIncludedStrings] = useState(newBoolArray(tuning.notes.length));
-  const voicings = useMemo(() => new Voicings(fretCount));
-  const [notes, setNotes] = useState([]);
+  const voicings = useMemo(() => new Voicings(fretCount), []);
+  const [notes, setNotes] = useState<Indicator[]>([]);
   const [voicingIndex, setVoicingIndex] = useState(0);
 
-  const computeRandomQuestion = (includedStrings) => {
-    const strings = includedStrings.reduce((acc, val, i) => {
+  const computeRandomQuestion = (includedStrings: boolean[]): Question => {
+    const strings = includedStrings.reduce<number[]>((acc, val, i) => {
       if (val) {
         acc.push(i);
       }
@@ -38,7 +57,7 @@ const App = () => {
     };
   };
 
-  const positionToNote = (string, fret) => {
+  const positionToNote = (string: number, fret: number): Note => {
     const rootNote = tuning.notes[string];
     return addSemitones(rootNote, fret)
   }
@@ -48,7 +67,7 @@ const App = () => {
   );
 
   const allNotes = useMemo(() => {
-    const result = [];
+    const result: Indicator[] = [];
 
     for (let string = 0; string < tuning.notes.length; string++) {
       for (let fret = 0; fret < fretCount + 1; fret++) {
@@ -63,11 +82,11 @@ const App = () => {
     return result;
   }, [tuning, showOctave]);
 
-  const handleSubmit = event => {
+  const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
     // Done late in case the tuning has changed.
     const solution = positionToNote(question.string, question.fret);
 
-    if (letterEquals(answer, solution)) {
+    if (toneEquals(answer, solution.toString())) {
       setQuestion(computeRandomQuestion(includedStrings));
       
       setJudgement({
@@ -84,14 +103,14 @@ const App = () => {
 
     setAnswer('');
 
-    event.preventDefault();
+    e.preventDefault();
   };
 
-  const handleTuningChanged = (e) => {
-    setTuning(TUNINGS.find(tuning => tuning.name === e.target.value) || tuning);
+  const handleTuningChanged = (e: SyntheticEvent<HTMLSelectElement>) => {
+    setTuning(TUNINGS.find(tuning => tuning.name === e.currentTarget.value) || tuning);
   }
 
-  const toggleGuitarString = toToggle => {
+  const toggleGuitarString = (toToggle: number) => {
     let value = [...includedStrings];
     value[toToggle] = !value[toToggle];
     setIncludedStrings(value);
@@ -101,7 +120,7 @@ const App = () => {
     }
   };
 
-  const showVoicing = index => {
+  const showVoicing = (index: number) => {
     const chord = chordType == 'Major' ? majorChord(chordRoot + '3') : minorChord(chordRoot + '3');
     const chordVoicings = voicings.getVoicings(tuning, chord).root;
 
@@ -112,11 +131,12 @@ const App = () => {
       index = chordVoicings.length - 1;
     }
 
-    const played = [];
+    const played: Indicator[] = [];
 
     chordVoicings[index].notes.forEach((fret, string) => {
-      let note = addSemitones(tuning.notes[string], fret);
       if (fret !== null) {
+        let note = addSemitones(tuning.notes[string], fret);
+
         played.push({
           type: note.tone === chord.rootNote.tone ? 'chordRoot' : 'indicator',
           note,
@@ -149,7 +169,7 @@ const App = () => {
     showVoicing(Number.POSITIVE_INFINITY);
   }
 
-  const switchAppMode = mode => {
+  const switchAppMode = (mode: AppMode) => {
     setAppMode(mode);
 
     if (mode === 'quiz') {
@@ -215,11 +235,11 @@ const App = () => {
       >
         {
           notes.map((note, i) =>
-            <Note
+            <NoteIndicator
               key={i}
               showOctave={showOctave}
               {...note}
-            ></Note>
+            ></NoteIndicator>
           )
         }
 

@@ -1,18 +1,18 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import './Fret.css';
 
-function dots(i) {
+function dots(i: number): ReactNode {
   return (i === 2 || i === 4 || i === 6 || i === 8) ? 
     <span className="dot single"></span>
   : (i === 11) ? 
     <>
-      <span className="dot double1"></span><span className="dot double2"></span
-    ></>
+      <span className="dot double1"></span><span className="dot double2"></span>
+    </>
   :
     null;
 }
 
-export default ({num}) =>
+export default ({num}: {num: number}) =>
   <>
     <span
       className="Fret-number"

@@ -1,4 +1,4 @@
-export const LETTER_TO_NUM = {
+export const LETTER_TO_NUM: {[tone: string]: number} = {
   'C': 0,
   'C#': 1,
   'Db': 1,
@@ -33,28 +33,29 @@ export const NUM_TO_LETTER = [
   'B'
 ];
 
-class Note {
-  constructor(tone, octave) {
-    this.tone = tone;
-    this.octave = octave;
-  }
+export class Note {
+  constructor(public tone: string, public octave: number) {}
 
-  toString() {
+  toString(): string {
     return this.tone;
   }
 
-  toSpn() {
+  toSpn(): string {
     return this.tone + this.octave;
+  }
+
+  toneEquals(note: Note): boolean {
+    return LETTER_TO_NUM[this.tone] === LETTER_TO_NUM[note.tone];
   }
 }
 
-export function letterEquals(a, b) {
+export function letterEquals(a: string, b: string): boolean {
   return LETTER_TO_NUM.hasOwnProperty(a) &&
     LETTER_TO_NUM.hasOwnProperty(b) &&
     LETTER_TO_NUM[a] === LETTER_TO_NUM[b];
 }
 
-export function parseSpn(spn) {
+export function parseSpn(spn: string | Note): Note {
   if (typeof spn !== 'string') {
     // This lets us safely call parseSpn on things that might already be note objects.
     return spn;
@@ -67,7 +68,7 @@ export function parseSpn(spn) {
   return new Note(spn[0], parseInt(spn[1]));
 }
 
-export function interval(note, tone) {
+export function interval(note: Note, tone: string): number {
   let start = LETTER_TO_NUM[parseSpn(note).tone]; // 9
   let end = LETTER_TO_NUM[tone]; // 0
 
@@ -80,7 +81,7 @@ export function interval(note, tone) {
   return result;
 }
 
-export function addSemitones(note, semitones) {
+export function addSemitones(note: Note, semitones: number) {
   const num = LETTER_TO_NUM[note.tone];
 
   let octave = note.octave;
@@ -104,12 +105,13 @@ export function addSemitones(note, semitones) {
 }
 
 export class Tuning {
-  constructor(name, notes) {
-    this.name = name;
+  notes: Note[];
+
+  constructor(public name: string, notes: string[]) {
     this.notes = notes.map(parseSpn);
   }
 
-  toString() {
+  toString(): string {
     return this.notes.join('-');
   }
 }
@@ -158,7 +160,13 @@ export const INTERVALS = {
   Ocatve: 12
 }
 
-export const CHORD_QUALITY = {
+interface ChordQuality {
+  name: string;
+  short: string;
+  long: string;
+}
+
+export const CHORD_QUALITY: { [name: string]: ChordQuality } = {
   Major: {
     name: 'Major',
     short: '',
@@ -175,40 +183,41 @@ export const CHORD_QUALITY = {
     long: 'aug'
   },
   Diminished: {
-    named: 'Diminished',
-    short: 'o'
+    name: 'Diminished',
+    short: 'o',
+    long: 'dim'
   }
 }
 
-class Chord {
-  constructor(quality, rootNote, intervals) {
-    this.quality = quality;
+export class Chord {
+  public notes: Note[];
+
+  constructor(public quality: ChordQuality, rootNote: Note, intervals: number[]) {
     this.notes = [
       rootNote,
       ...intervals.map(i => addSemitones(rootNote, i))
     ];
   }
 
-  shortName() {
+  shortName(): string {
     return this.notes[0].tone + this.quality.short;
   }
 
-  longName() {
+  longName(): string {
     return this.notes[0].tone + this.quality.long;
   }
 
-  get rootNote() {
+  get rootNote(): Note {
     return this.notes[0];
   }
 }
 
-export function majorChord(rootNote) {
+export function majorChord(rootNote: Note | string): Chord {
   rootNote = parseSpn(rootNote);
   return new Chord(CHORD_QUALITY.Major, rootNote, [INTERVALS.MajorThird, INTERVALS.PerfectFifth]);
 }
 
-export function minorChord(rootNote) {
+export function minorChord(rootNote: Note | string): Chord {
   rootNote = parseSpn(rootNote);
   return new Chord(CHORD_QUALITY.Minor, rootNote, [INTERVALS.MinorThird, INTERVALS.PerfectFifth]);
 }
-

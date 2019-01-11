@@ -1,13 +1,15 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, ReactNode } from 'react';
 import { tmap } from './util';
 import './Fretboard.css';
 import Fret from './Fret';
+import { Tuning } from './music';
 
 const headSize = 100;
 
-export const positionToGridArea = (string, fret) => `s${ string + 1 } / span 1 / s${string + 1} / f${ fret }`;
+export const positionToGridArea = 
+  (string: number, fret: number) => `s${ string + 1 } / span 1 / s${string + 1} / f${ fret }`;
 
-export const computeFretSizes = (fretCount) => {
+export const computeFretSizes = (fretCount: number): number[] => {
   const frets = [];
   let remainingSize = 10;
 
@@ -20,7 +22,7 @@ export const computeFretSizes = (fretCount) => {
   return frets;
 }
 
-export function gridColumns(frets) {
+export function gridColumns(frets: number[]): string {
   return '[start] auto [head] ' + headSize  + 'px ' + 
     tmap(frets, (size, i, { first, last }) =>
       (first ? '[nut f0] ' : '') +
@@ -29,7 +31,7 @@ export function gridColumns(frets) {
     ).join(' ') + ' auto [end]'
 }
 
-export function gridRows(tuning) {
+export function gridRows(tuning: Tuning): string {
   const l = tuning.notes.length;
   return '[top] auto ' +
     tmap(tuning.notes, (_note, i, { first }) =>
@@ -37,11 +39,17 @@ export function gridRows(tuning) {
     ).join(' ') + ' [bottom-edge s0]'
 }
 
-export default function({children, fretCount, tuning}) {
+interface Props {
+  children?: ReactNode;
+  fretCount: number;
+  tuning: Tuning;
+}
+
+export default function({children, fretCount, tuning}: Props) {
   const [
     fretSizes,
     columns,
-  ] = useMemo(() => {
+  ] = useMemo<[number[], string]>(() => {
     const frets = computeFretSizes(fretCount);
 
     return [
@@ -76,10 +84,9 @@ export default function({children, fretCount, tuning}) {
     { children }
 
     {
-      fretSizes.map((size, i) =>
+      fretSizes.map((_size, i) =>
         <Fret
           key={i}
-          size={size}
           num={i}
         ></Fret>
       )
