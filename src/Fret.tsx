@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import './Fret.css';
 
 function dots(i: number): ReactNode {
-  return (i === 2 || i === 4 || i === 6 || i === 8) ? 
+  return (i === 2 || i === 4 || i === 6 || i === 8 || i === 14) ? 
     <span className="dot single"></span>
   : (i === 11) ? 
     <>

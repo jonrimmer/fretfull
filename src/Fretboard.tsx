@@ -1,9 +1,10 @@
-import React, { useMemo, ReactNode } from 'react';
+import React, { useMemo, ReactNode, useContext } from 'react';
 import { tmap } from './util';
 import './Fretboard.css';
 import Fret from './Fret';
-import { Tuning } from './music';
-
+import { Tuning, Note } from './music';
+import NoteIndicator from './NoteIndicator';
+import { SettingsContext } from './settings-context';
 const headSize = 100;
 
 export const positionToGridArea = 
@@ -39,13 +40,20 @@ export function gridRows(tuning: Tuning): string {
     ).join(' ') + ' [bottom-edge s0]'
 }
 
+export interface Indicator {
+  type: 'quiz' | 'indicator' | 'chordRoot';
+  note: Note;
+  gridArea: string;
+}
+
 interface Props {
   children?: ReactNode;
   fretCount: number;
   tuning: Tuning;
+  notes: Indicator[];
 }
 
-export default function({children, fretCount, tuning}: Props) {
+export default function({children, fretCount, tuning, notes}: Props) {
   const [
     fretSizes,
     columns,
@@ -57,6 +65,8 @@ export default function({children, fretCount, tuning}: Props) {
       gridColumns(frets)
     ]
   }, [fretCount]);
+
+  const { showOctave } = useContext(SettingsContext);
 
   const rows = useMemo(() => gridRows(tuning), [tuning]);
 
@@ -82,6 +92,16 @@ export default function({children, fretCount, tuning}: Props) {
     ></div>
 
     { children }
+
+    {
+      notes.map((note, i) =>
+        <NoteIndicator
+          key={i}
+          showOctave={showOctave}
+          {...note}
+        ></NoteIndicator>
+      )
+    }
 
     {
       fretSizes.map((_size, i) =>

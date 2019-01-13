@@ -49,7 +49,7 @@ export class Note {
   }
 }
 
-export function letterEquals(a: string, b: string): boolean {
+export function toneEquals(a: string, b: string): boolean {
   return LETTER_TO_NUM.hasOwnProperty(a) &&
     LETTER_TO_NUM.hasOwnProperty(b) &&
     LETTER_TO_NUM[a] === LETTER_TO_NUM[b];
@@ -113,6 +113,11 @@ export class Tuning {
 
   toString(): string {
     return this.notes.join('-');
+  }
+
+  positionToNote(string: number, fret: number) {
+    const rootNote = this.notes[string];
+    return addSemitones(rootNote, fret)
   }
 }
 
