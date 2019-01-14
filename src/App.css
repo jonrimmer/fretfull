@@ -124,3 +124,15 @@ select.App-tuning {
 .App-judgement.incorrect {
   background-color: red;
 }
+
+.App-nav {
+  display: flex;
+}
+
+.App-nav a {
+  padding: 12px;
+}
+
+.App-nav a.active {
+  font-weight: bold;
+}

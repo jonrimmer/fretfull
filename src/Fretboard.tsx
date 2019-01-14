@@ -96,7 +96,7 @@ export default function({children, fretCount, tuning, notes}: Props) {
     {
       notes.map((note, i) =>
         <NoteIndicator
-          key={i}
+          key={'note_' + i}
           showOctave={showOctave}
           {...note}
         ></NoteIndicator>
@@ -106,7 +106,7 @@ export default function({children, fretCount, tuning, notes}: Props) {
     {
       fretSizes.map((_size, i) =>
         <Fret
-          key={i}
+          key={'fret' + i}
           num={i}
         ></Fret>
       )

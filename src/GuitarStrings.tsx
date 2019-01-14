@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { Fragment, useContext } from 'react';
 import { Tuning } from './music';
 import { SettingsContext } from './settings-context';
 
@@ -13,9 +13,8 @@ export default (
     tuning.notes.map((rootNote, num, { length } ) => {
       const width = Math.max(1, Math.round(((length - (num + 1)) / length) * MAX_STRING_WIDTH));
       return (
-        <>
+        <Fragment key={num}>
           <div
-            key={ num }
             onClick={() => onToggle(num)}
             className={'root-note ' + (activeStrings[num] ? 'included' : 'excluded')}
             style={{
@@ -30,7 +29,7 @@ export default (
               borderBottom: `${ width }px solid yellow`
             }}
           ></div>
-        </>
+        </Fragment>
       );
     })
   }</>

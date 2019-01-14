@@ -8,13 +8,11 @@ import Quiz from './Quiz';
 import GuitarStrings from './GuitarStrings';
 import Explorer from './Explorer';
 import Settings from './Settings';
+import { BrowserRouter as Router, Route, Link, NavLink } from 'react-router-dom';
 
-const fretCount = 14;
-
-type AppMode = 'quiz' | 'explore';
+const fretCount = 15;
 
 const App = () => {
-  const [appMode, setAppMode] = useState<AppMode>('explore');
   const [tuning, setTuning] = useState(TUNINGS[0]);
   const [showOctave, setShowOctave] = useState(true);
   const [activeStrings, setActiveStrings] = useState(newBoolArray(tuning.notes.length));
@@ -30,7 +28,7 @@ const App = () => {
     if (options.tuning) setTuning(options.tuning);
   }
 
-  const fretboard = (notes: Indicator[]) =>
+  const neck = (notes: Indicator[]) =>
     <Fretboard
       fretCount={fretCount}
       tuning={tuning}
@@ -43,47 +41,36 @@ const App = () => {
   </Fretboard>;
   
   return (
-    <div className="App">
-      <SettingsContext.Provider value={{ showOctave, tuning, fretCount, update: updateSettings }}>
+    <Router>
+      <div className="App">
+        <SettingsContext.Provider value={{ showOctave, tuning, fretCount, update: updateSettings }}>
         <header className="App-header">
-          Guitar Quiz 
-          <label>
-            Mode
-          </label>
-          <label className="App-explore">
-            <input
-              type="radio"
-              value="explore"
-              checked={appMode === 'explore'}
-              onChange={() => setAppMode('explore')}
-            />
-              Explore
-          </label>
-          <label className="App-quiz">
-            <input
-              type="radio"
-              value="quiz"
-              checked={appMode === 'quiz'}
-              onChange={() => setAppMode('quiz')}
-            />
-            Quiz
-          </label>
+          Guitar Quiz
+          <nav className="App-nav">
+            <NavLink exact to="/">Explore</NavLink>
+            <NavLink to="/quiz">Quiz</NavLink>
+          </nav>
         </header>
-        <Settings></Settings>
+          <Settings></Settings>
 
-        {
-          appMode === 'quiz' ? 
-            <Quiz
-              includedStrings={activeStrings}
-              content={fretboard}
-            ></Quiz> 
-              :
-            <Explorer
-              content={fretboard}
-            ></Explorer>
-        }
-      </SettingsContext.Provider>
-    </div>
+          <Route
+            exact
+            path="/"
+            render={() => <Explorer content={neck}></Explorer>}
+          />
+
+          <Route
+            path="/quiz"
+            render={() => 
+              <Quiz
+                includedStrings={activeStrings}
+                content={neck}
+              ></Quiz>
+            }
+          />
+        </SettingsContext.Provider>
+      </div>
+    </Router>
   );
 }
 
