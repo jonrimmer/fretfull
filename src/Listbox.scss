@@ -1,0 +1,20 @@
+.Listbox {
+  overflow-y: auto;
+  position: relative;
+  padding: 0;
+  border: 1px solid #DDD;
+  background-color: #FFF;
+  font-size: 12px;
+  margin: 0;
+
+  [role="option"] {
+    display: block;
+    padding: 0.4em 1em 0.4em 1em;
+    position: relative;
+    line-height: 1.8em;
+  }
+
+  [role="option"].selected {
+    background: #bde4ff; 
+  }
+}

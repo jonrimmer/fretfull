@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './App.css';
+import './App.scss';
 import { TUNINGS, Tuning } from './music';
 import { newBoolArray } from './util';
 import Fretboard, { Indicator } from './Fretboard';
@@ -8,7 +8,7 @@ import Quiz from './Quiz';
 import GuitarStrings from './GuitarStrings';
 import Explorer from './Explorer';
 import Settings from './Settings';
-import { BrowserRouter as Router, Route, Link, NavLink } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Link, NavLink, Redirect } from 'react-router-dom';
 
 const fretCount = 15;
 
@@ -44,19 +44,21 @@ const App = () => {
     <Router>
       <div className="App">
         <SettingsContext.Provider value={{ showOctave, tuning, fretCount, update: updateSettings }}>
-        <header className="App-header">
-          Guitar Quiz
-          <nav className="App-nav">
-            <NavLink exact to="/">Explore</NavLink>
-            <NavLink to="/quiz">Quiz</NavLink>
-          </nav>
-        </header>
-          <Settings></Settings>
+          <header className="App-header">
+            <h1 className="App-title">Fretfull</h1>
+            <nav className="App-nav">
+              <NavLink exact to="/">Explore</NavLink>
+              <NavLink to="/quiz">Quiz</NavLink>
+            </nav>
+            <Settings></Settings>
+          </header>
+
+          <Route exact path="/" render={() => <Redirect to="/explore/A/Major" />}></Route>
 
           <Route
             exact
-            path="/"
-            render={() => <Explorer content={neck}></Explorer>}
+            path="/explore/:chordRoot/:chordType"
+            render={props => <Explorer content={neck} {...props}></Explorer>}
           />
 
           <Route

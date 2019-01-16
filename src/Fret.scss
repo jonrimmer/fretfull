@@ -1,0 +1,33 @@
+.Fret {
+  border-right: 3px solid #CCC;
+  position: relative;
+  
+  .dot {
+    display: block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #888;
+    position: absolute;
+    left: calc(50% - 10px);
+  }
+  
+  .dot.single {
+    top: calc(50% - 10px);
+  }
+  
+  .dot.double1 {
+    top: calc(25% - 10px);
+  }
+  
+  .dot.double2 {
+    top: calc(75% - 10px);
+  }
+  
+}
+
+.Fret-number {
+  display: block;
+  justify-self: center;
+  margin: 6px;
+}

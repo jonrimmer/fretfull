@@ -33,6 +33,7 @@ export class Voicing {
   minFret: number;
   maxFret: number;
   distance: number;
+  private strValue: string;
 
   constructor(public notes: VoicingNotes) {
     const unmuted = notes.filter(n => n !== null) as number[];
@@ -40,6 +41,11 @@ export class Voicing {
     this.maxFret = Math.max(...unmuted);
     this.distance = notes.reduce<number>((a, b) => a + (b === null ? this.maxFret + 1 : b), 0);
     this.notes = notes;
+    this.strValue = this.notes.map(n => n === null ? 'x' : n).join(' ');
+  }
+
+  toString() {
+    return this.strValue;
   }
 }
 

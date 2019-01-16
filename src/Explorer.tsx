@@ -3,35 +3,60 @@ import { Indicator, positionToGridArea } from './Fretboard';
 import { SettingsContext } from './settings-context';
 import { Voicings } from './voicing';
 import { majorChord, minorChord, addSemitones } from './music';
+import Listbox from './Listbox';
+import './Explorer.scss';
+import { RouteProps, RouteChildrenProps } from 'react-router';
 
-export default ({ content }: { content: (notes: Indicator[]) => ReactNode }) => {
+interface Params { 
+  chordRoot: string;
+  chordType: string;
+}
+
+interface Props extends RouteChildrenProps<Params> {
+  content: (notes: Indicator[]) => ReactNode;
+
+}
+
+export default ({ content, match, history }: Props) => {
   const { tuning, fretCount } = useContext(SettingsContext);
-  const [chordRoot, setChordRoot] = useState('A');
-  const [chordType, setChordType] = useState('Major');
+  // const [chordRoot, setChordRoot] = useState('A');
+  // const [chordType, setChordType] = useState('Major');
+
+  let { chordRoot, chordType } = match ? match.params : { chordRoot: 'A', chordType: 'Major' };
+
+  chordRoot = decodeURIComponent(chordRoot);
+
   const voicings = useMemo(() => new Voicings(fretCount), []);
-  const [voicingIndex, setVoicingIndex] = useState(0);
-  const [notes, setNotes] = useState<Indicator[]>([]);
+  let [voicingIndex, setVoicingIndex] = useState(0);
 
-  useEffect(() => {
-    const allNotes: Indicator[] = [];
+  const chord = useMemo(() => {
+    return chordType == 'Major' ? majorChord(chordRoot + '3') : minorChord(chordRoot + '3');
+  }, [chordRoot, chordType]);
 
-    for (let string = 0; string < tuning.notes.length; string++) {
-      for (let fret = 0; fret < fretCount + 1; fret++) {
-        allNotes.push({
-          type: 'indicator',
-          note: tuning.positionToNote(string, fret),
-          gridArea: positionToGridArea(string, fret)
-        })
-      }
-    }
+  const chordVoicings = useMemo(() => {
+    setVoicingIndex(voicingIndex = 0);
+    return voicings.getVoicings(tuning, chord).root;
+  }, [tuning, chord]);
 
-    setNotes(allNotes);
-  }, [tuning, fretCount]);
+  // useEffect(() => {
+  //   const allNotes: Indicator[] = [];
+
+  //   for (let string = 0; string < tuning.notes.length; string++) {
+  //     for (let fret = 0; fret < fretCount + 1; fret++) {
+  //       allNotes.push({
+  //         type: 'indicator',
+  //         note: tuning.positionToNote(string, fret),
+  //         gridArea: positionToGridArea(string, fret)
+  //       })
+  //     }
+  //   }
+
+  //   setNotes(allNotes);
+  // }, [tuning, fretCount]);
+
+  const voicing = chordVoicings[voicingIndex];
 
   const showVoicing = (index: number) => {
-    const chord = chordType == 'Major' ? majorChord(chordRoot + '3') : minorChord(chordRoot + '3');
-    const chordVoicings = voicings.getVoicings(tuning, chord).root;
-
     if (index < 0) {
       index = 0;
     }
@@ -39,9 +64,13 @@ export default ({ content }: { content: (notes: Indicator[]) => ReactNode }) => 
       index = chordVoicings.length - 1;
     }
 
+    setVoicingIndex(index);
+  }
+
+  const notes = useMemo(() => {
     const played: Indicator[] = [];
 
-    chordVoicings[index].notes.forEach((fret, string) => {
+    voicing.notes.forEach((fret, string) => {
       if (fret !== null) {
         let note = addSemitones(tuning.notes[string], fret);
 
@@ -53,9 +82,8 @@ export default ({ content }: { content: (notes: Indicator[]) => ReactNode }) => 
       }
     });
 
-    setNotes(played);
-    setVoicingIndex(index);
-  }
+    return played;
+  }, [voicing]);
 
   const showChord = () => {
     showVoicing(0);
@@ -80,38 +108,39 @@ export default ({ content }: { content: (notes: Indicator[]) => ReactNode }) => 
   return (
     <>
       { content(notes) }
-      <div className="chordSelector">
-        <select
-          className="App-chord-root"
+
+      <div className="Explorer">
+        <label className="Explorer-chord-label">Root</label>
+        <Listbox
+          className="Explorer-chord"
+          options={['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']}
           value={chordRoot}
-          onChange={event => setChordRoot(event.target.value)}
-        >
-          <option>A</option>
-          <option>A#</option>
-          <option>B</option>
-          <option>C</option>
-          <option>C#</option>
-          <option>D</option>
-          <option>D#</option>
-          <option>E</option>
-          <option>F</option>
-          <option>F#</option>
-          <option>G</option>
-          <option>G#</option>
-        </select>
-        <select
-          className="App-chord-type"
+          onSelect={value => history.push(`/explore/${ encodeURIComponent(value) }/${ chordType }`)}
+        />
+
+        <label className="Explorer-chord-root-label">Chord</label>
+        <Listbox
+          className="Explorer-chord-root"
+          options={['Major', 'Minor']}
           value={chordType}
-          onChange={event => setChordType(event.target.value)}
-        >
-          <option>Major</option>
-          <option>Minor</option>
-        </select>
-        <button onClick={showChord}>Chord</button>
-        <button onClick={firstVoicing}>|&lt;</button>
-        <button onClick={prevVoicing}>&lt;</button>
-        <button onClick={nextVoicing}>&gt;</button>
-        <button onClick={lastVoicing}>&gt;|</button>
+          onSelect={value => history.push(`/explore/${ encodeURIComponent(chordRoot) }/${ value }`)}
+        />
+
+        <label className="Explorer-voicings-label">{ chordVoicings.length} voicings</label>
+
+        <Listbox
+          className="Explorer-voicings"
+          options={chordVoicings}
+          value={voicing}
+          onSelect={value => setVoicingIndex(chordVoicings.indexOf(value))}
+        />
+
+        <div className="Explorer-voicings-nav">
+          <button onClick={() => setVoicingIndex(0)}>|&lt;</button>
+          <button onClick={() => showVoicing(voicingIndex - 1)}>&lt;</button>
+          <button onClick={() => showVoicing(voicingIndex + 1)}>&gt;</button>
+          <button onClick={() => showVoicing(chordVoicings.length - 1)}>&gt;|</button>
+        </div>
       </div>
     </>
   );

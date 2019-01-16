@@ -26,3 +26,11 @@ export function tmap<T>(
     })
   );
 }
+
+export function isStringArray(value: any): value is string[] {
+  if (value instanceof Array && (value.length === 0 || typeof value[0] === 'string')) {
+    return true;
+  }
+
+  return false;
+}
