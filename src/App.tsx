@@ -8,7 +8,7 @@ import Quiz from './Quiz';
 import GuitarStrings from './GuitarStrings';
 import Explorer from './Explorer';
 import Settings from './Settings';
-import { BrowserRouter as Router, Route, Link, NavLink, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route, NavLink, Redirect } from 'react-router-dom';
 
 const fretCount = 15;
 
@@ -41,7 +41,7 @@ const App = () => {
   </Fretboard>;
   
   return (
-    <Router>
+    <Router basename={process.env.PUBLIC_URL}>
       <div className="App">
         <SettingsContext.Provider value={{ showOctave, tuning, fretCount, update: updateSettings }}>
           <header className="App-header">
