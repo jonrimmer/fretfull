@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "6bc9fe7cda668649dd79",
+    "revision": "c6bd4d555fded5c3100e",
     "url": "/fretfull/static/css/main.66f7d5b7.chunk.css"
   },
   {
-    "revision": "6bc9fe7cda668649dd79",
-    "url": "/fretfull/static/js/main.6bc9fe7c.chunk.js"
+    "revision": "c6bd4d555fded5c3100e",
+    "url": "/fretfull/static/js/main.c6bd4d55.chunk.js"
   },
   {
     "revision": "9d3c4701c49b97f5f1a9",
@@ -16,7 +16,7 @@ self.__precacheManifest = [
     "url": "/fretfull/static/js/runtime~main.82d1c2fa.js"
   },
   {
-    "revision": "80ef2f3766743f158c899f937ba1e103",
+    "revision": "cc00343b54af607ed74b480fb66f204a",
     "url": "/fretfull/index.html"
   }
 ];
