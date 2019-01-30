@@ -5,7 +5,7 @@ import { Voicings } from './voicing';
 import { majorChord, minorChord, addSemitones } from './music';
 import Listbox from './Listbox';
 import './Explorer.scss';
-import { RouteProps, RouteChildrenProps } from 'react-router';
+import { RouteChildrenProps } from 'react-router';
 
 interface Params { 
   chordRoot: string;
@@ -14,19 +14,45 @@ interface Params {
 
 interface Props extends RouteChildrenProps<Params> {
   content: (notes: Indicator[]) => ReactNode;
-
 }
+
+class ChordRoot {
+  private label: string;
+
+  constructor(public value: string, label?: string) {
+    this.label = label || this.value;
+  }
+
+  toString() {
+    return this.label;
+  }
+}
+
+const ChordRoots = [
+  new ChordRoot('A'),
+  new ChordRoot('A#', 'A# / Db'),
+  new ChordRoot('B'),
+  new ChordRoot('C'),
+  new ChordRoot('C#', 'C# / Db'),
+  new ChordRoot('D'),
+  new ChordRoot('D#', 'D# / Eb'),
+  new ChordRoot('E'),
+  new ChordRoot('F'),
+  new ChordRoot('F#', 'F# / Gb'),
+  new ChordRoot('G'),
+  new ChordRoot('G#', 'G# / Ab')
+];
 
 export default ({ content, match, history }: Props) => {
   const { tuning, fretCount } = useContext(SettingsContext);
-  // const [chordRoot, setChordRoot] = useState('A');
-  // const [chordType, setChordType] = useState('Major');
 
-  let { chordRoot, chordType } = match ? match.params : { chordRoot: 'A', chordType: 'Major' };
+  let { chordRoot: crParam, chordType } = match ? match.params : { chordRoot: 'A', chordType: 'Major' };
 
-  chordRoot = decodeURIComponent(chordRoot);
+  crParam = decodeURIComponent(crParam);
 
-  const voicings = useMemo(() => new Voicings(fretCount), []);
+  const chordRoot = ChordRoots.find(cr => cr.value == crParam) || ChordRoots[0];
+
+  const voicings = useMemo(() => new Voicings(fretCount), [fretCount]);
   let [voicingIndex, setVoicingIndex] = useState(0);
 
   const chord = useMemo(() => {
@@ -113,9 +139,9 @@ export default ({ content, match, history }: Props) => {
         <label className="Explorer-chord-label">Root</label>
         <Listbox
           className="Explorer-chord"
-          options={['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']}
+          options={ChordRoots}
           value={chordRoot}
-          onSelect={value => history.push(`/explore/${ encodeURIComponent(value) }/${ chordType }`)}
+          onSelect={selected => history.push(`/explore/${ encodeURIComponent(selected.value) }/${ chordType }`)}
         />
 
         <label className="Explorer-chord-root-label">Chord</label>
@@ -123,7 +149,7 @@ export default ({ content, match, history }: Props) => {
           className="Explorer-chord-root"
           options={['Major', 'Minor']}
           value={chordType}
-          onSelect={value => history.push(`/explore/${ encodeURIComponent(chordRoot) }/${ value }`)}
+          onSelect={selected => history.push(`/explore/${ encodeURIComponent(chordRoot.value) }/${ selected }`)}
         />
 
         <label className="Explorer-voicings-label">{ chordVoicings.length} voicings</label>
