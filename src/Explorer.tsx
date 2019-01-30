@@ -64,22 +64,6 @@ export default ({ content, match, history }: Props) => {
     return voicings.getVoicings(tuning, chord).root;
   }, [tuning, chord]);
 
-  // useEffect(() => {
-  //   const allNotes: Indicator[] = [];
-
-  //   for (let string = 0; string < tuning.notes.length; string++) {
-  //     for (let fret = 0; fret < fretCount + 1; fret++) {
-  //       allNotes.push({
-  //         type: 'indicator',
-  //         note: tuning.positionToNote(string, fret),
-  //         gridArea: positionToGridArea(string, fret)
-  //       })
-  //     }
-  //   }
-
-  //   setNotes(allNotes);
-  // }, [tuning, fretCount]);
-
   const voicing = chordVoicings[voicingIndex];
 
   const showVoicing = (index: number) => {
@@ -110,26 +94,6 @@ export default ({ content, match, history }: Props) => {
 
     return played;
   }, [voicing]);
-
-  const showChord = () => {
-    showVoicing(0);
-  };
-
-  const nextVoicing = () => {
-    showVoicing(voicingIndex + 1);
-  }
-
-  const prevVoicing = () => {
-    showVoicing(voicingIndex - 1);
-  }
-
-  const firstVoicing = () => {
-    showVoicing(Number.NEGATIVE_INFINITY);
-  }
-
-  const lastVoicing = () => {
-    showVoicing(Number.POSITIVE_INFINITY);
-  }
 
   return (
     <>
