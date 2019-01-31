@@ -1,11 +1,11 @@
 import { interval, addSemitones, Tuning, Chord, Note } from './music';
 
 export class Voicings {
-  tuningCache = new Map<Tuning, Map<Chord, ChordVoicings>>();
+  tuningCache = new Map<Tuning, Map<Chord, Voicing[]>>();
 
   constructor(public fretCount = 12) {}
 
-  getVoicings(tuning: Tuning, chord: Chord): ChordVoicings {
+  getVoicings(tuning: Tuning, chord: Chord): Voicing[] {
     let voicingsCache = this.tuningCache.get(tuning);
   
     if (!voicingsCache) {
@@ -35,7 +35,7 @@ export class Voicing {
   distance: number;
   private strValue: string;
 
-  constructor(public notes: VoicingNotes) {
+  constructor(public notes: VoicingNotes, public bassNote: Note) {
     const unmuted = notes.filter(n => n !== null) as number[];
     this.minFret = Math.min(...unmuted);
     this.maxFret = Math.max(...unmuted);
@@ -49,25 +49,15 @@ export class Voicing {
   }
 }
 
-export function createVoicings(tuning: Tuning, chord: Chord, fretCount: number): ChordVoicings {
-  const result: ChordVoicings = {
-    root: [],
-    inversions: []
-  };
+export function createVoicings(tuning: Tuning, chord: Chord, fretCount: number): Voicing[] {
+  const result: Voicing[] = [];
 
   function addCurrent(current: VoicingNotes) {
-    const voicing = new Voicing(current);
-
     const bassNoteIndex = current.findIndex(n => n !== null) as number;
     const bassNote = addSemitones(tuning.notes[bassNoteIndex], current[bassNoteIndex] as number);
-    const inversion = bassNote.tone !== chord.notes[0].tone
+    const voicing = new Voicing(current, bassNote);
 
-    if (inversion) {
-      result.inversions.push(voicing);
-    }
-    else {
-      result.root.push(voicing);
-    }
+    result.push(voicing);
   }
 
   function buildVoicing(rootNotes: Note[], current: (number | null)[], unplaced: Note[], placed: Note[]) {
@@ -155,8 +145,7 @@ export function createVoicings(tuning: Tuning, chord: Chord, fretCount: number):
     []
   );
 
-  result.root.sort((a, b) => a.distance - b.distance);
-  result.inversions.sort((a, b) => a.distance - b.distance);
+  result.sort((a, b) => a.distance - b.distance);
 
   return result;
 }

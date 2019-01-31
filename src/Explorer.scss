@@ -1,37 +1,39 @@
 .Explorer {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr auto;
+  grid-template-columns: 1fr 1fr 1fr 1fr auto;
   grid-template-rows: auto 1fr;
   grid-gap: 12px;
   margin: 0 12px 12px 12px;
 }
 
-.Explorer-chord {
-  grid-area: 2 / 1;
+.Explorer-label {
+  grid-row: 1;
+  font-size: small;
+  font-weight: bold;
 }
 
-.Explorer-chord-label {
-  grid-area: 1/ 1;
+.Explorer-list {
+  grid-row: 2;
 }
 
-.Explorer-chord-root {
-  grid-area: 2 / 2;
+.Explorer-root {
+  grid-area: 1;
 }
 
-.Explorer-chord-root-label {
-  grid-area: 1 / 2;
+.Explorer-chord-type {
+  grid-column: 2;
+}
+
+.Explorer-bass-note {
+  grid-column: 3;
 }
 
 .Explorer-voicings {
-  grid-area: 2 / 3;
-}
-
-.Explorer-voicings-label {
-  grid-area: 1 / 3;
+  grid-column: 4;
 }
 
 .Explorer-voicings-nav {
-  grid-area: 2 / 4;
+  grid-area: 2 / 5;
   display: flex;
   flex-direction: column;
 

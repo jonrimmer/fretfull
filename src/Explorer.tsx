@@ -19,8 +19,8 @@ interface Props extends RouteChildrenProps<Params> {
 class ChordRoot {
   private label: string;
 
-  constructor(public value: string, label?: string) {
-    this.label = label || this.value;
+  constructor(public value: any, label?: string) {
+    this.label = label || this.value.toString();
   }
 
   toString() {
@@ -54,15 +54,27 @@ export default ({ content, match, history }: Props) => {
 
   const voicings = useMemo(() => new Voicings(fretCount), [fretCount]);
   let [voicingIndex, setVoicingIndex] = useState(0);
-
+ 
   const chord = useMemo(() => {
     return chordType == 'Major' ? majorChord(chordRoot + '3') : minorChord(chordRoot + '3');
   }, [chordRoot, chordType]);
 
+  const bassOptions = useMemo(() => {
+    return [...chord.notes.map(note => note.toString()), 'Any'];
+  }, [chord]);
+
+  let [bassNote, setBassNote] = useState(bassOptions[0]);
+
+  if (!bassOptions.includes(bassNote)) {
+    setBassNote(bassNote = bassOptions[0]);
+  }
+
   const chordVoicings = useMemo(() => {
     setVoicingIndex(voicingIndex = 0);
-    return voicings.getVoicings(tuning, chord).root;
-  }, [tuning, chord]);
+    let result = voicings.getVoicings(tuning, chord);
+
+    return bassNote === 'Any' ? result : result.filter(v => v.bassNote.tone === bassNote);
+  }, [tuning, chord, bassNote]);
 
   const voicing = chordVoicings[voicingIndex];
 
@@ -100,26 +112,33 @@ export default ({ content, match, history }: Props) => {
       { content(notes) }
 
       <div className="Explorer">
-        <label className="Explorer-chord-label">Root</label>
+        <label className="Explorer-root Explorer-label">Root</label>
         <Listbox
-          className="Explorer-chord"
+          className="Explorer-chord Explorer-list"
           options={ChordRoots}
           value={chordRoot}
           onSelect={selected => history.push(`/explore/${ encodeURIComponent(selected.value) }/${ chordType }`)}
         />
 
-        <label className="Explorer-chord-root-label">Chord</label>
+        <label className="Explorer-chord-type Explorer-label">Chord</label>
         <Listbox
-          className="Explorer-chord-root"
+          className="Explorer-chord-type Explorer-list"
           options={['Major', 'Minor']}
           value={chordType}
           onSelect={selected => history.push(`/explore/${ encodeURIComponent(chordRoot.value) }/${ selected }`)}
         />
 
-        <label className="Explorer-voicings-label">{ chordVoicings.length} voicings</label>
-
+        <label className="Explorer-bass-note Explorer-label">Bass</label>
         <Listbox
-          className="Explorer-voicings"
+          className="Explorer-bass-note Explorer-list"
+          options={bassOptions}
+          value={bassNote}
+          onSelect={value => setBassNote(value)}
+        />
+
+        <label className="Explorer-voicings Explorer-label">{ chordVoicings.length} Voicings</label>
+        <Listbox
+          className="Explorer-voicings Explorer-list"
           options={chordVoicings}
           value={voicing}
           onSelect={value => setVoicingIndex(chordVoicings.indexOf(value))}
