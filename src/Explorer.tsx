@@ -6,6 +6,7 @@ import { majorChord, minorChord, addSemitones } from './music';
 import Listbox from './Listbox';
 import './Explorer.scss';
 import { RouteChildrenProps } from 'react-router';
+import { useDepState } from './util';
 
 interface Params { 
   chordRoot: string;
@@ -56,18 +57,21 @@ export default ({ content, match, history }: Props) => {
   let [voicingIndex, setVoicingIndex] = useState(0);
  
   const chord = useMemo(() => {
-    return chordType == 'Major' ? majorChord(chordRoot + '3') : minorChord(chordRoot + '3');
+    return chordType == 'Major' ? majorChord(chordRoot.value + '3') : minorChord(chordRoot.value + '3');
   }, [chordRoot, chordType]);
 
   const bassOptions = useMemo(() => {
     return [...chord.notes.map(note => note.toString()), 'Any'];
   }, [chord]);
 
-  let [bassNote, setBassNote] = useState(bassOptions[0]);
-
-  if (!bassOptions.includes(bassNote)) {
-    setBassNote(bassNote = bassOptions[0]);
-  }
+  const [bassNote, setBassNote] = useDepState(currentBass => {
+    if (bassOptions.includes(currentBass)) {
+      return currentBass;
+    }
+    else {
+      return bassOptions[0];
+    }
+  }, [bassOptions]);
 
   const chordVoicings = useMemo(() => {
     setVoicingIndex(voicingIndex = 0);
