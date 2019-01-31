@@ -1,26 +1,26 @@
-import { parseSpn, addSemitones, letterEquals, majorChord, minorChord, distanceForwards, interval } from './music';
+import { parseSpn, addSemitones, toneEquals, majorChord, minorChord, interval } from './music';
 
 describe('letterEquals', () => {
   it('should return true for identical letters and accidentals', () => {
-    expect(letterEquals('A', 'A')).toBe(true);
-    expect(letterEquals('B', 'B')).toBe(true);
-    expect(letterEquals('G', 'G')).toBe(true);
-    expect(letterEquals('A#', 'A#')).toBe(true);
-    expect(letterEquals('Gb', 'Gb')).toBe(true);
+    expect(toneEquals('A', 'A')).toBe(true);
+    expect(toneEquals('B', 'B')).toBe(true);
+    expect(toneEquals('G', 'G')).toBe(true);
+    expect(toneEquals('A#', 'A#')).toBe(true);
+    expect(toneEquals('Gb', 'Gb')).toBe(true);
   });
 
   it('should return false for non-indentical letters and accidentals', () => {
-    expect(letterEquals('A', 'B')).toBe(false);
-    expect(letterEquals('B', 'A')).toBe(false);
-    expect(letterEquals('G', 'F')).toBe(false);
-    expect(letterEquals('Bb', 'B#')).toBe(false);
-    expect(letterEquals('G#', 'Fb')).toBe(false);
+    expect(toneEquals('A', 'B')).toBe(false);
+    expect(toneEquals('B', 'A')).toBe(false);
+    expect(toneEquals('G', 'F')).toBe(false);
+    expect(toneEquals('Bb', 'B#')).toBe(false);
+    expect(toneEquals('G#', 'Fb')).toBe(false);
   });
 
   it('should return true for equivalent accidentals', () => {
-    expect(letterEquals('A#', 'Bb')).toBe(true);
-    expect(letterEquals('C#', 'Db')).toBe(true);
-    expect(letterEquals('F#', 'Gb')).toBe(true);
+    expect(toneEquals('A#', 'Bb')).toBe(true);
+    expect(toneEquals('C#', 'Db')).toBe(true);
+    expect(toneEquals('F#', 'Gb')).toBe(true);
   });
 });
 
