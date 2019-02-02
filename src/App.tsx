@@ -7,7 +7,7 @@ import Quiz from './Quiz';
 import GuitarStrings from './GuitarStrings';
 import Explorer from './Explorer';
 import Settings from './Settings';
-import { BrowserRouter as Router, Route, NavLink, Redirect } from 'react-router-dom';
+import { HashRouter as Router, Route, NavLink, Redirect } from 'react-router-dom';
 import { TUNINGS, Tuning } from './music';
 
 const fretCount = 15;
