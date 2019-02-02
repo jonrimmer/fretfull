@@ -64,6 +64,10 @@ export class Note {
   toneEquals(note: Note): boolean {
     return LETTER_TO_NUM[this.tone] === LETTER_TO_NUM[note.tone];
   }
+
+  equals(note: Note): boolean {
+    return this.toneEquals(note) && this.octave === note.octave;
+  }
 }
 
 export function toneEquals(a: string, b: string): boolean {

@@ -43,16 +43,15 @@ export function useDepState<S>(
 ): [S, Dispatch<SetStateAction<S>>] {
   let [state, setState] = useState<S>(factory());
 
-  state = useMemo(() => {
+  useMemo(() => {
     let newState = factory(state);
 
-    if (newState !== state) {
-      // We must only call if the new value is different, to avoid an infinite loop.
+    if (newState !== state) {  
       setState(state = newState);
     }
 
     return state;
-  }, [...inputs, state]);
+  }, inputs);
 
   return [state, setState];
 }

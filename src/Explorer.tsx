@@ -1,7 +1,7 @@
 import React, { useContext, ReactNode, useState, useMemo, SyntheticEvent } from 'react';
 import { Indicator, positionToGridArea } from './Fretboard';
 import { SettingsContext } from './settings-context';
-import { Voicings, createVoicings } from './voicing';
+import { createVoicings, Voicing } from './voicing';
 import Listbox from './Listbox';
 import './Explorer.scss';
 import { RouteChildrenProps } from 'react-router';
@@ -97,42 +97,22 @@ export default ({ content, match, history }: Props) => {
   crParam = decodeURIComponent(crParam);
 
   const chordRoot = ChordRoots.find(cr => cr.value == crParam) || ChordRoots[0];
-
-  const voicings = useMemo(() => new Voicings(fretCount), [fretCount]);
-  let [voicingIndex, setVoicingIndex] = useState(0);
  
   const chord = useMemo(() => {
     return chordTypes[chordType](chordRoot.value + '3');
   }, [chordRoot, chordType]);
 
-  let [chordNotes, setChordNotes] = useState<ChordNote[]>([]);
-
-  useMemo(() => {
+  const [chordNotes, setChordNotes] = useDepState(() => {
     const isSeventh = chord.notes.length > 3;
 
-    setChordNotes(chordNotes = chord.notes.map<ChordNote>((note, i) => ({
+    return chord.notes.map<ChordNote>((note, i) => ({
       note,
       label: note.toString() +' (' + ChordParts[i] + ')',
       status: i === 0 ? 'Bass' : (i === 2 && isSeventh) ? 'Optional' : 'Required'
-    })));
+    }));
   }, [chord]);
-
-  const bassOptions = useMemo(() => {
-    return [...chord.notes.map(note => note.toString()), 'Any'];
-  }, [chord]);
-
-  const [bassNote, setBassNote] = useDepState(currentBass => {
-    if (bassOptions.includes(currentBass)) {
-      return currentBass;
-    }
-    else {
-      return bassOptions[0];
-    }
-  }, [bassOptions]);
 
   const chordVoicings = useMemo(() => {
-    setVoicingIndex(voicingIndex = 0);
-    // let result = voicings.getVoicings(tuning, chord);
     let result = createVoicings(
       tuning,
       chordNotes.filter(n => n.status === 'Bass' || n.status === 'Required').map(n => n.note),
@@ -149,7 +129,19 @@ export default ({ content, match, history }: Props) => {
     return result;
   }, [tuning, chordNotes]);
 
-  const voicing = chordVoicings[voicingIndex];
+  const [voicing, setVoicing] = useDepState<Voicing>(prevState => {
+    if (prevState) {
+      let index = chordVoicings.findIndex(v => v.equals(prevState));
+
+      if (index != -1) {
+        return chordVoicings[index];
+      }
+    }
+
+    return chordVoicings[0];
+  }, [chordVoicings]);
+
+  const voicingIndex = chordVoicings.indexOf(voicing);
 
   const showVoicing = (index: number) => {
     if (index < 0) {
@@ -159,7 +151,7 @@ export default ({ content, match, history }: Props) => {
       index = chordVoicings.length - 1;
     }
 
-    setVoicingIndex(index);
+    setVoicing(chordVoicings[index]);
   }
 
   const notes = useMemo(() => {
@@ -276,11 +268,11 @@ export default ({ content, match, history }: Props) => {
           className="Explorer-voicings Explorer-list"
           options={chordVoicings}
           value={voicing}
-          onSelect={value => setVoicingIndex(chordVoicings.indexOf(value))}
+          onSelect={value => setVoicing(value)}
         />
 
         <div className="Explorer-voicings-nav">
-          <button onClick={() => setVoicingIndex(0)}>|&lt;</button>
+          <button onClick={() => showVoicing(0)}>|&lt;</button>
           <button onClick={() => showVoicing(voicingIndex - 1)}>&lt;</button>
           <button onClick={() => showVoicing(voicingIndex + 1)}>&gt;</button>
           <button onClick={() => showVoicing(chordVoicings.length - 1)}>&gt;|</button>

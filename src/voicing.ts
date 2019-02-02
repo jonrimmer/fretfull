@@ -47,6 +47,14 @@ export class Voicing {
   toString() {
     return this.strValue;
   }
+
+  equals({ notes }: Voicing) {
+    if (this.notes.length !== notes.length) {
+      return false;
+    }
+
+    return !this.notes.some((n1, i) => notes[i] !== n1);
+  }
 }
 
 export function createVoicings(tuning: Tuning, required: Note[], optional: Note[] = [], fretCount: number): Voicing[] {
