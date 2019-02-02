@@ -1,13 +1,13 @@
 {
-  "main.css": "/fretfull/static/css/main.77532603.chunk.css",
-  "main.js": "/fretfull/static/js/main.c4ae0c1d.chunk.js",
-  "main.js.map": "/fretfull/static/js/main.c4ae0c1d.chunk.js.map",
-  "static/js/1.96fc0ef1.chunk.js": "/fretfull/static/js/1.96fc0ef1.chunk.js",
-  "static/js/1.96fc0ef1.chunk.js.map": "/fretfull/static/js/1.96fc0ef1.chunk.js.map",
+  "main.css": "/fretfull/static/css/main.d4ead8f6.chunk.css",
+  "main.js": "/fretfull/static/js/main.643608eb.chunk.js",
+  "main.js.map": "/fretfull/static/js/main.643608eb.chunk.js.map",
+  "static/js/1.c73ef4f7.chunk.js": "/fretfull/static/js/1.c73ef4f7.chunk.js",
+  "static/js/1.c73ef4f7.chunk.js.map": "/fretfull/static/js/1.c73ef4f7.chunk.js.map",
   "runtime~main.js": "/fretfull/static/js/runtime~main.82d1c2fa.js",
   "runtime~main.js.map": "/fretfull/static/js/runtime~main.82d1c2fa.js.map",
-  "static/css/main.77532603.chunk.css.map": "/fretfull/static/css/main.77532603.chunk.css.map",
+  "static/css/main.d4ead8f6.chunk.css.map": "/fretfull/static/css/main.d4ead8f6.chunk.css.map",
   "index.html": "/fretfull/index.html",
-  "precache-manifest.fe65d9f6a2705b3205d5af4b2c1ae583.js": "/fretfull/precache-manifest.fe65d9f6a2705b3205d5af4b2c1ae583.js",
+  "precache-manifest.d27f47074af0566e76b6bc6ed5e77817.js": "/fretfull/precache-manifest.d27f47074af0566e76b6bc6ed5e77817.js",
   "service-worker.js": "/fretfull/service-worker.js"
 }
