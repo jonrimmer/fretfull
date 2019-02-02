@@ -15,7 +15,7 @@ export class Voicings {
     let voicings = voicingsCache.get(chord);
 
     if (!voicings) {
-      voicingsCache.set(chord, voicings = createVoicings(tuning, chord, this.fretCount));
+      voicingsCache.set(chord, voicings = createVoicings(tuning, chord.notes, [], this.fretCount));
     }
   
     return voicings;
@@ -49,7 +49,7 @@ export class Voicing {
   }
 }
 
-export function createVoicings(tuning: Tuning, chord: Chord, fretCount: number): Voicing[] {
+export function createVoicings(tuning: Tuning, required: Note[], optional: Note[] = [], fretCount: number): Voicing[] {
   const result: Voicing[] = [];
 
   function addCurrent(current: VoicingNotes) {
@@ -60,8 +60,8 @@ export function createVoicings(tuning: Tuning, chord: Chord, fretCount: number):
     result.push(voicing);
   }
 
-  function buildVoicing(rootNotes: Note[], current: (number | null)[], unplaced: Note[], placed: Note[]) {
-    if (rootNotes.length === 0) {
+  function buildVoicing(openNotes: Note[], current: (number | null)[], unplaced: Note[], placed: Note[]) {
+    if (openNotes.length === 0) {
       if (unplaced.length === 0) {
         addCurrent(current);
       }
@@ -69,7 +69,7 @@ export function createVoicings(tuning: Tuning, chord: Chord, fretCount: number):
       return;
     }
 
-    const [rootNote, ...remaining] = rootNotes;
+    const [openNote, ...remaining] = openNotes;
     const unmuted = current.filter(n => n !== null) as number[];
     const min = Math.min(...unmuted);
     const max = Math.max(...unmuted);
@@ -77,7 +77,7 @@ export function createVoicings(tuning: Tuning, chord: Chord, fretCount: number):
     let possibilities = 0;
 
     for (let n = 0; n < unplaced.length; n++) {
-      const start = interval(rootNote, unplaced[n].toString());
+      const start = interval(openNote, unplaced[n].toString());
   
       for(let i = start; i < fretCount + 1; i += 12) {
         const newMin = Math.min(i, min);
@@ -99,10 +99,11 @@ export function createVoicings(tuning: Tuning, chord: Chord, fretCount: number):
     }
 
     if (tuning.notes.length - current.length > unplaced.length) {
-      // It's still possible to include repeated notes / mutes while placing all unplaced notes.
+      // It's still possible to include repeated and optional notes / mutes
+      // while placing all unplaced required notes.
 
-      for (let n = 0; n < placed.length; n++) {
-        const start = interval(rootNote, placed[n].toString());
+      [...placed, ...optional].forEach(n => {
+        const start = interval(openNote, n.toString());
     
         for(let i = start; i < fretCount + 1; i += 12) {
           const newMin = Math.min(i, min);
@@ -121,7 +122,7 @@ export function createVoicings(tuning: Tuning, chord: Chord, fretCount: number):
 
           possibilities++;
         }
-      }
+      });
 
       // We only consider muting if we can't find any valid note to play,
       // or we haven't yet placed any note. This prevents adding lots of
@@ -141,7 +142,7 @@ export function createVoicings(tuning: Tuning, chord: Chord, fretCount: number):
   buildVoicing(
     tuning.notes,
     [],
-    chord.notes,
+    required,
     []
   );
 

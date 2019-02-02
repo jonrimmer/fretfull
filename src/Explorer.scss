@@ -1,6 +1,6 @@
 .Explorer {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr auto;
+  grid-template-columns: 1fr 1fr 1.2fr 1fr auto;
   grid-template-rows: auto 1fr;
   grid-gap: 12px;
   margin: 0 12px 12px 12px;
@@ -26,6 +26,21 @@
 
 .Explorer-bass-note {
   grid-column: 3;
+}
+
+.Explorer-chord-notes {
+  grid-column: 3;
+
+  &.Explorer-list {
+    border: 1px solid #CCC;
+    padding: 6px 10px;  
+    font-size: small;
+    display: grid;
+    grid-template-columns: auto auto auto auto auto;
+    grid-auto-flow: row;
+    align-content: start;
+    grid-gap: 6px;
+  }
 }
 
 .Explorer-voicings {
