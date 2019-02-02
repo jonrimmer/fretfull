@@ -1,18 +1,18 @@
-import { majorTriad, minorChord} from './chord';
+import { majorTriad, minorTriad} from './chord';
 import { interval, parseSpn } from './note';
 
 describe('Chord', () => {
   it('should construct major chords correctly', () => {
     const c = majorTriad('C3');
-    expect(c.shortName()).toEqual('C');
-    expect(c.longName()).toEqual('Cmaj');
+    expect(c.shortName).toEqual('C');
+    expect(c.longName).toEqual('Cmaj');
     expect(c.notes.join('-')).toEqual('C-E-G');
   });
 
   it('should construct minor chords correctly', () => {
-    const cmin = minorChord('C3');
-    expect(cmin.shortName()).toEqual('Cm');
-    expect(cmin.longName()).toEqual('Cmin');
+    const cmin = minorTriad('C3');
+    expect(cmin.shortName).toEqual('Cm');
+    expect(cmin.longName).toEqual('Cmin');
     expect(cmin.notes.join('-')).toEqual('C-D#-G');
   });
 });

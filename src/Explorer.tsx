@@ -6,7 +6,24 @@ import Listbox from './Listbox';
 import './Explorer.scss';
 import { RouteChildrenProps } from 'react-router';
 import { useDepState } from './util';
-import { majorTriad, minorChord, addSemitones } from './music';
+import {
+  majorTriad,
+  minorTriad,
+  addSemitones,
+  diminishedTriad,
+  majorSeventh,
+  augmentedTriad,
+  majorSixth,
+  minorSixth,
+  minorSeventh,
+  seventh,
+  augmentedSeventh,
+  diminishedSeventh,
+  halfDiminishedSeventh,
+  minorMajorSeventh,
+  Note,
+  Chord
+} from './music';
 
 interface Params { 
   chordRoot: string;
@@ -44,10 +61,28 @@ const ChordRoots = [
   new ChordRoot('G#', 'G# / Ab')
 ];
 
+const chordTypes: { [key: string]: (note: Note | string) => Chord } = {
+  'Major triad': majorTriad,
+  'Minor triad': minorTriad,
+  'Augmented triad': augmentedTriad,
+  'Diminished triad': diminishedTriad,
+  'Major 6th': majorSixth,
+  'Minor 6th': minorSixth,
+  '7th': seventh,
+  'Major 7th': majorSeventh,
+  'Minor 7th': minorSeventh,
+  'Augmented 7th': augmentedSeventh,
+  'Diminished 7th': diminishedSeventh,
+  'Half-diminished 7th': halfDiminishedSeventh,
+  'Minor-major 7th': minorMajorSeventh
+}
+
+const chordTypeKeys = Object.keys(chordTypes);
+
 export default ({ content, match, history }: Props) => {
   const { tuning, fretCount } = useContext(SettingsContext);
 
-  let { chordRoot: crParam, chordType } = match ? match.params : { chordRoot: 'A', chordType: 'Major' };
+  let { chordRoot: crParam, chordType } = match ? match.params : { chordRoot: 'A', chordType: 'Major triad' };
 
   crParam = decodeURIComponent(crParam);
 
@@ -57,7 +92,7 @@ export default ({ content, match, history }: Props) => {
   let [voicingIndex, setVoicingIndex] = useState(0);
  
   const chord = useMemo(() => {
-    return chordType == 'Major' ? majorTriad(chordRoot.value + '3') : minorChord(chordRoot.value + '3');
+    return chordTypes[chordType](chordRoot.value + '3');
   }, [chordRoot, chordType]);
 
   const bassOptions = useMemo(() => {
@@ -127,7 +162,7 @@ export default ({ content, match, history }: Props) => {
         <label className="Explorer-chord-type Explorer-label">Chord</label>
         <Listbox
           className="Explorer-chord-type Explorer-list"
-          options={['Major', 'Minor']}
+          options={chordTypeKeys}
           value={chordType}
           onSelect={selected => history.push(`/explore/${ encodeURIComponent(chordRoot.value) }/${ selected }`)}
         />

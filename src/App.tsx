@@ -53,8 +53,8 @@ const App = () => {
             <Settings></Settings>
           </header>
 
-          <Route exact path="/" render={() => <Redirect to="/explore/A/Major" />}></Route>
-          <Route exact path="/explore" render={() => <Redirect to="/explore/A/Major" />}></Route>
+          <Route exact path="/" render={() => <Redirect to="/explore/A/Major triad" />}></Route>
+          <Route exact path="/explore" render={() => <Redirect to="/explore/A/Major triad" />}></Route>
 
           <Route
             exact
