@@ -41,7 +41,7 @@ const App = () => {
     </Fretboard>;
   
   return (
-    <Router basename={process.env.PUBLIC_URL}>
+    <Router>
       <div className="App">
         <SettingsContext.Provider value={{ showOctave, tuning, fretCount, update: updateSettings }}>
           <header className="App-header">
