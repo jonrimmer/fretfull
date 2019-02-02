@@ -2,9 +2,9 @@ import React, { useMemo, ReactNode, useContext } from 'react';
 import { tmap } from './util';
 import './Fretboard.scss';
 import Fret from './Fret';
-import { Tuning, Note } from './music';
 import NoteIndicator from './NoteIndicator';
 import { SettingsContext } from './settings-context';
+import { Tuning, Note } from './music';
 const headSize = 100;
 
 export const positionToGridArea = 

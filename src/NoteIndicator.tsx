@@ -1,5 +1,6 @@
 import React from 'react';
 import './Note.css';
+import { Note } from './music';
 
 const typeClass = {
   quiz: 'Note-quiz',
@@ -7,7 +8,14 @@ const typeClass = {
   chordRoot: 'Note-chord-root'
 };
 
-export default function({ note, type, showOctave, gridArea }) {
+interface NoteIndicatorParams {
+  note: Note,
+  type: keyof typeof typeClass,
+  showOctave: boolean;
+  gridArea: string;
+}
+
+export default function({ note, type, showOctave, gridArea }: NoteIndicatorParams) {
   let label;
   type = type || 'indicator';
 

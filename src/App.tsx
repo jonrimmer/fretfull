@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './App.scss';
-import { TUNINGS, Tuning } from './music';
 import { newBoolArray } from './util';
 import Fretboard, { Indicator } from './Fretboard';
 import { SettingsContext } from './settings-context';
@@ -9,6 +8,7 @@ import GuitarStrings from './GuitarStrings';
 import Explorer from './Explorer';
 import Settings from './Settings';
 import { BrowserRouter as Router, Route, NavLink, Redirect } from 'react-router-dom';
+import { TUNINGS, Tuning } from './music';
 
 const fretCount = 15;
 

@@ -1,5 +1,4 @@
 import React, { Fragment, useContext } from 'react';
-import { Tuning } from './music';
 import { SettingsContext } from './settings-context';
 import './GuitarStrings.scss';
 

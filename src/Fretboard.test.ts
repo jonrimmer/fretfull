@@ -1,5 +1,5 @@
 import { gridColumns, gridRows, getOpenVoicing, getVoicings} from './Fretboard';
-import { majorChord, TUNINGS } from './music';
+import { majorTriad, TUNINGS } from './music';
 
 describe('gridColumns', () => {
   it('should return the correct columns', () => {

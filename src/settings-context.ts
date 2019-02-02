@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { TUNINGS, Tuning } from './music';
+import { Tuning, TUNINGS } from './music';
 
 export interface Settings {
   showOctave: boolean;

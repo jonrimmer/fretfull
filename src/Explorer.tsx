@@ -1,12 +1,12 @@
-import React, { useContext, ReactNode, useState, useMemo, useEffect } from 'react';
+import React, { useContext, ReactNode, useState, useMemo } from 'react';
 import { Indicator, positionToGridArea } from './Fretboard';
 import { SettingsContext } from './settings-context';
 import { Voicings } from './voicing';
-import { majorChord, minorChord, addSemitones } from './music';
 import Listbox from './Listbox';
 import './Explorer.scss';
 import { RouteChildrenProps } from 'react-router';
 import { useDepState } from './util';
+import { majorTriad, minorChord, addSemitones } from './music';
 
 interface Params { 
   chordRoot: string;
@@ -57,7 +57,7 @@ export default ({ content, match, history }: Props) => {
   let [voicingIndex, setVoicingIndex] = useState(0);
  
   const chord = useMemo(() => {
-    return chordType == 'Major' ? majorChord(chordRoot.value + '3') : minorChord(chordRoot.value + '3');
+    return chordType == 'Major' ? majorTriad(chordRoot.value + '3') : minorChord(chordRoot.value + '3');
   }, [chordRoot, chordType]);
 
   const bassOptions = useMemo(() => {
