@@ -1,6 +1,7 @@
 import React, { Fragment, useContext } from 'react';
 import { Tuning } from './music';
 import { SettingsContext } from './settings-context';
+import './GuitarStrings.scss';
 
 const MAX_STRING_WIDTH = 3;
 
@@ -16,13 +17,13 @@ export default (
         <Fragment key={num}>
           <div
             onClick={() => onToggle(num)}
-            className={'root-note ' + (activeStrings[num] ? 'included' : 'excluded')}
+            className={'GuitarStrings-root-note ' + (activeStrings[num] ? 'included' : 'excluded')}
             style={{
               gridArea: `s${ num + 1 } / fretboard-end`
             }}
           >{ rootNote.tone }</div>
           <div
-            className="string"
+            className="GuitarStrings-string"
             style = {{
               height: '50%',
               gridArea: `s${ num } / head / s${ num + 1 } / fretboard-end`,

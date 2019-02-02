@@ -1,0 +1,36 @@
+.Quiz-question {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Quiz-answer-field {
+  width: 30vw;
+  font-size: 24px;
+  padding: 12px;
+  border: 1px solid #CCC;
+  border-radius: 8px; 
+}
+
+@keyframes bgToGray {
+  to {
+    background-color: lightgray;
+  }
+}
+
+.Quiz-judgement {
+  animation-name: bgToGray;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+  margin-top: 24px;
+  padding: 16px;
+  font-size: 24px;
+}
+
+.Quiz-judgement.correct {
+  background-color: green;
+}
+
+.Quiz-judgement.incorrect {
+  background-color: red;
+}

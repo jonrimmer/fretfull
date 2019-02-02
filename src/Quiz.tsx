@@ -3,6 +3,7 @@ import { Indicator, positionToGridArea } from './Fretboard';
 import { getRandomInt } from './util';
 import { SettingsContext } from './settings-context';
 import { toneEquals } from './music';
+import './Quiz.scss';
 
 interface Judgement {
   correct: boolean;
@@ -84,12 +85,12 @@ export default ({ content, includedStrings }: Params) => {
       { content(notes) }
       <div className="Quiz">
         <form 
-          className="App-question"
+          className="Quiz-question"
           onSubmit={event => handleSubmit(event)}
         >
           <h1>What is the higlighted note?</h1>
           <input
-            className="App-answer-field"
+            className="Quiz-answer-field"
             type="text"
             value={answer}
             onChange={event => setAnswer(event.target.value)}
@@ -97,7 +98,7 @@ export default ({ content, includedStrings }: Params) => {
           {
             judgement ?
               <div
-                className={'App-judgement ' + (judgement.correct ? 'correct' : 'incorrect') }
+                className={'Quiz-judgement ' + (judgement.correct ? 'correct' : 'incorrect') }
                 key={judgement.id}
               >
                 { judgement.correct ? 'Correct' : 'Incorrect' }

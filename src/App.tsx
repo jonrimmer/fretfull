@@ -34,11 +34,11 @@ const App = () => {
       tuning={tuning}
       notes={notes}
     >
-    <GuitarStrings
-      activeStrings={activeStrings}
-      onToggle={toggleGuitarString}
-    ></GuitarStrings>
-  </Fretboard>;
+      <GuitarStrings
+        activeStrings={activeStrings}
+        onToggle={toggleGuitarString}
+      ></GuitarStrings>
+    </Fretboard>;
   
   return (
     <Router basename={process.env.PUBLIC_URL}>
@@ -47,13 +47,14 @@ const App = () => {
           <header className="App-header">
             <h1 className="App-title">Fretfull</h1>
             <nav className="App-nav">
-              <NavLink exact to="/">Explore</NavLink>
-              <NavLink to="/quiz">Quiz</NavLink>
+              <NavLink className="App-explore-link" to="/explore">Explore</NavLink>
+              <NavLink className="App-quiz-link" to="/quiz">Quiz</NavLink>
             </nav>
             <Settings></Settings>
           </header>
 
           <Route exact path="/" render={() => <Redirect to="/explore/A/Major" />}></Route>
+          <Route exact path="/explore" render={() => <Redirect to="/explore/A/Major" />}></Route>
 
           <Route
             exact

@@ -1,6 +1,7 @@
 import React, { useContext, SyntheticEvent } from 'react';
 import { SettingsContext } from './settings-context';
 import { TUNINGS } from './music';
+import './Settings.scss';
 
 export default () => {
   const { tuning, showOctave, update} = useContext(SettingsContext);
@@ -10,18 +11,19 @@ export default () => {
   }
   
   return (
-    <div className="App-options">
-      
-      <label className="App-tuning">Tuning</label>
+    <div className="Settings">
+      <label htmlFor="tuning">Tuning</label>
+
       <select
-        className="App-tuning"
+        className="Settings-tuning"
         value={tuning.name}
         onChange={handleTuningChanged}
+        id="tuning"
       >
         { TUNINGS.map((tuning, i) => <option key={i}>{tuning.name}</option>)}
       </select>
 
-      <label className="App-show-octave">
+      <label className="Settings-show-octave">
         <input
           type="checkbox"
           checked={showOctave}

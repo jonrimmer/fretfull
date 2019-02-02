@@ -1,7 +1,3 @@
-*, *::before, *::after {
-  box-sizing: border-box;
-}
-
 .App {
   display: grid;
   position: absolute;
@@ -23,10 +19,11 @@
   display: grid;
   grid-area: header;
   grid-template: auto / auto 1fr auto;
-  background: #EEE;
+  background: #F0F0F0;
   grid-column-gap: 16px;
   align-items: center;
   padding: 0 12px;
+  border-bottom: 1px solid #DDD;
 }
 
 .App-title {
@@ -40,12 +37,6 @@
   display: flex;
 }
 
-.App-options {
-  grid-area: 1 / 3;
-  justify-self: start;
-  display: flex;
-}
-
 .App-mode {
   grid-area: 1 / 1 / 1 / 2;
 }
@@ -55,62 +46,19 @@
   min-height: 0;
 }
 
-.App-show-octave {
-  grid-area: 2 / 4 / 2 / 4;
-}
-
-.string {
-  z-index: 10;
-}
-
-.root-note {
-  padding: 0 6px 0 12px;
-  align-self: center;
-}
-
-.root-note.excluded {
-  color: #CCC; 
-}
-
-.App-question {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.App-answer-field {
-  width: 30vw;
-  font-size: 24px;
-  padding: 12px;
-  border: 1px solid #CCC;
-  border-radius: 8px; 
-}
-
-@keyframes bgToGray {
-  to {
-    background-color: lightgray;
-  }
-}
-
-.App-judgement {
-  animation-name: bgToGray;
-  animation-duration: 0.5s;
-  animation-fill-mode: forwards;
-  margin-top: 24px;
-  padding: 16px;
-  font-size: 24px;
-}
-
-.App-judgement.correct {
-  background-color: green;
-}
-
-.App-judgement.incorrect {
-  background-color: red;
-}
-
 .App-nav a {
   padding: 12px;
+  text-align: center;
+  border-left: 1px solid #CCC;
+  width: 100px;
+
+  &:last-child {
+    border-right: 1px solid #CCC;
+  }
+
+  &.active {
+    background-color: #F8f8f8;
+  }
 }
 
 .App-nav a.active {
