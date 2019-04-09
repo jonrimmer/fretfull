@@ -1,4 +1,4 @@
-import React, { ReactNode, useState, useRef, KeyboardEvent, useMemo } from 'react';
+import React, { useRef, KeyboardEvent, useEffect } from 'react';
 import './Listbox.scss';
 import cn from 'classnames';
 import { isStringArray } from './util';
@@ -9,187 +9,113 @@ export interface Option {
 }
 
 interface Props {
+  name: string;
   options: any[];
   className?: string;
   value: any;
   onSelect: (value: any) => void;
 }
 
-export default React.memo(({ options, className, value, onSelect }: Props) => {
-  const ulEl = useRef<HTMLUListElement>(null);
-  const [moveUpDownEnabled, setMoveUpDownEnabled] = useState(false);
-  const [moveButton, setMoveButton] = useState(null);
-  const [keysSoFar, setKeysSoFar] = useState('');
-  const [activeDescendant, setActiveDescendnt] = useState<string | null>(null);
-  
-  function focusItem(item: Element) {
+export default React.memo(
+  ({ name, options, className, value, onSelect }: Props) => {
+    const ulEl = useRef<HTMLUListElement>(null);
+    const selectedOptionIndex = options.findIndex(option => option === value);
+    const activeDescendant =
+      selectedOptionIndex > -1
+        ? name + '_opt' + selectedOptionIndex
+        : undefined;
 
-  }
-
-  function focusFirstItem() {
-    if (ulEl.current) {
-      const firstItem = ulEl.current.querySelector('[role="option"]');
-
-      if (firstItem) {
-        focusItem(firstItem);
-      }
-    }
-  }
-
-  function focusLastItem() {
-    if (ulEl.current) {
-      const itemList = ulEl.current.querySelectorAll('[role="option"]');
-
-      if (itemList.length) {
-        focusItem(itemList[itemList.length - 1]);
-      }
-    }
-  }
-
-  function setupFocus() {
-    if (activeDescendant) {
-      return;
-    }
-
-    focusFirstItem();
-  }
-
-  function moveUpItems() {
-
-  }
-
-  function moveDownItems() {
-
-  }
-
-  function toggleSelectItem(item: Element) {
-
-  }
-
-  function findItemToFocus(key: string): Element | null {
-    if (!ulEl.current) {
-      return null;
-    }
-
-    const itemList = ulEl.current.querySelectorAll('[role="option"]');
-    let searchIndex = 0;
-
-    if (keysSoFar) {
-      for (let i = 0; i < keysSoFar.length; i++) {
-        if (itemList[i].getAttribute('id') == activeDescendant) {
-          searchIndex = 0;
+    useEffect(() => {
+      const ul = ulEl.current;
+      if (ul) {
+        if (ul.scrollHeight > ul.clientHeight) {
+          const element = ul.querySelector(
+            '#' + activeDescendant
+          ) as HTMLElement;
+          var scrollBottom = ul.clientHeight + ul.scrollTop;
+          var elementBottom = element.offsetTop + element.offsetHeight;
+          if (elementBottom > scrollBottom) {
+            ul.scrollTop = elementBottom - ul.clientHeight;
+          } else if (element.offsetTop < ul.scrollTop) {
+            ul.scrollTop = element.offsetTop;
+          }
         }
       }
+    }, [activeDescendant]);
+
+    function focusFirstItem() {
+      onSelect(options[0]);
     }
 
-    const soFar = keysSoFar + key;
-
-    return null;
-  }
-
-  function checkKeyPress(evt: KeyboardEvent) {
-    const key = evt.key;
-  
-    if (!activeDescendant) {
-      return;
+    function focusLastItem() {
+      onSelect(options[options.length - 1]);
     }
 
-    let nextItem: Element | null = document.getElementById(activeDescendant);
-
-    if (!nextItem) {
-      return;
-    }
-
-    switch(key) {
-      case 'PageUp':
-      case 'PageDown':
-        if (moveUpDownEnabled) {
-          evt.preventDefault();
-
-          if (key === 'PageUp') {
-            moveUpItems();
-          }
-          else {
-            moveDownItems();
-          }
-        }
-
-        break;
-      case 'ArrowUp':
-      case 'ArrowDown':
-        evt.preventDefault();
-
-        if (moveUpDownEnabled && evt.altKey) {
-          if (key === 'ArrowUp') {
-            moveUpItems();
-          }
-          else {
-            moveDownItems();
-          }
-          
-          return;
-        }
-
-        if (key === 'ArrowUp') {
-          nextItem = nextItem.previousElementSibling;
-        }
-        else {
-          nextItem = nextItem.nextElementSibling;
-        }
-
-        if (nextItem) {
-          focusItem(nextItem);
-        }
-
-        break;
-
-      case 'Home':
-        evt.preventDefault();
+    function setupFocus() {
+      if (!activeDescendant) {
         focusFirstItem();
-        break;
-      case 'End':
-        evt.preventDefault();
-        focusLastItem();
-        break;
-      case 'Space':
-        evt.preventDefault();
-        toggleSelectItem(nextItem);
-        break;
-      case 'Backspace':
-      case 'Delete':
-      case 'Return':
-       if (!moveButton) {
-         return;
-       }
-
-       break;
-      default:
-       const itemToFocus = findItemToFocus(key);
-       if (itemToFocus) {
-         focusItem(itemToFocus);
-       }
-       break;
+      }
     }
+
+    function checkKeyPress(evt: KeyboardEvent) {
+      const key = evt.key;
+
+      if (!activeDescendant) {
+        return;
+      }
+
+      let nextItem: Element | null = document.getElementById(activeDescendant);
+
+      if (!nextItem) {
+        return;
+      }
+
+      switch (key) {
+        case 'ArrowUp':
+          evt.preventDefault();
+          if (selectedOptionIndex > 0) {
+            onSelect(options[selectedOptionIndex - 1]);
+          }
+          break;
+        case 'ArrowDown':
+          evt.preventDefault();
+          if (selectedOptionIndex < options.length - 1) {
+            onSelect(options[selectedOptionIndex + 1]);
+          }
+          break;
+        case 'Home':
+          evt.preventDefault();
+          focusFirstItem();
+          break;
+        case 'End':
+          evt.preventDefault();
+          focusLastItem();
+          break;
+      }
+    }
+
+    return (
+      <ul
+        ref={ulEl}
+        className={cn('Listbox', className)}
+        role="listbox"
+        onFocus={setupFocus}
+        onKeyDown={checkKeyPress}
+        tabIndex={0}
+        aria-activedescendant={activeDescendant}
+      >
+        {options.map((o, i) => (
+          <li
+            key={i}
+            id={name + '_opt' + i}
+            className={cn('Listbox-item', { selected: value === o })}
+            role="option"
+            onClick={() => onSelect(o)}
+          >
+            {o.toString()}
+          </li>
+        ))}
+      </ul>
+    );
   }
-
-  function checkClickItem() {}
-
-  return (
-    <ul
-      ref={ulEl}
-      className={cn('Listbox', className)}
-      role="listbox"
-      onFocus={setupFocus}
-      onKeyDown={checkKeyPress}
-    >
-      { options.map((o, i) => (
-        <li
-          key={i}
-          className={cn('Listbox-item', { selected: value === o }) }
-          role="option"
-          onClick={() => onSelect(o)}
-        >{ o.toString() }</li>
-      )) }
-    </ul>
-  );
-});
+);

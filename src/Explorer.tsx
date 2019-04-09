@@ -1,4 +1,4 @@
-import React, { useContext, ReactNode, useState, useMemo, SyntheticEvent } from 'react';
+import React, { useContext, ReactNode, useMemo, SyntheticEvent } from 'react';
 import { Indicator, positionToGridArea } from './Fretboard';
 import { SettingsContext } from './settings-context';
 import { createVoicings, Voicing } from './voicing';
@@ -25,7 +25,7 @@ import {
   Chord
 } from './music';
 
-interface Params { 
+interface Params {
   chordRoot: string;
   chordType: string;
 }
@@ -85,19 +85,21 @@ const chordTypes: { [key: string]: (note: Note | string) => Chord } = {
   'Diminished 7th': diminishedSeventh,
   'Half-diminished 7th': halfDiminishedSeventh,
   'Minor-major 7th': minorMajorSeventh
-}
+};
 
 const chordTypeKeys = Object.keys(chordTypes);
 
 export default ({ content, match, history }: Props) => {
   const { tuning, fretCount } = useContext(SettingsContext);
 
-  let { chordRoot: crParam, chordType } = match ? match.params : { chordRoot: 'A', chordType: 'Major triad' };
+  let { chordRoot: crParam, chordType } = match
+    ? match.params
+    : { chordRoot: 'A', chordType: 'Major triad' };
 
   crParam = decodeURIComponent(crParam);
 
   const chordRoot = ChordRoots.find(cr => cr.value == crParam) || ChordRoots[0];
- 
+
   const chord = useMemo(() => {
     return chordTypes[chordType](chordRoot.value + '3');
   }, [chordRoot, chordType]);
@@ -107,15 +109,17 @@ export default ({ content, match, history }: Props) => {
 
     return chord.notes.map<ChordNote>((note, i) => ({
       note,
-      label: note.toString() +' (' + ChordParts[i] + ')',
-      status: i === 0 ? 'Bass' : (i === 2 && isSeventh) ? 'Optional' : 'Required'
+      label: note.toString() + ' (' + ChordParts[i] + ')',
+      status: i === 0 ? 'Bass' : i === 2 && isSeventh ? 'Optional' : 'Required'
     }));
   }, [chord]);
 
   const chordVoicings = useMemo(() => {
     let result = createVoicings(
       tuning,
-      chordNotes.filter(n => n.status === 'Bass' || n.status === 'Required').map(n => n.note),
+      chordNotes
+        .filter(n => n.status === 'Bass' || n.status === 'Required')
+        .map(n => n.note),
       chordNotes.filter(n => n.status === 'Optional').map(n => n.note),
       fretCount
     );
@@ -129,30 +133,32 @@ export default ({ content, match, history }: Props) => {
     return result;
   }, [tuning, chordNotes]);
 
-  const [voicing, setVoicing] = useDepState<Voicing>(prevState => {
-    if (prevState) {
-      let index = chordVoicings.findIndex(v => v.equals(prevState));
+  const [voicing, setVoicing] = useDepState<Voicing>(
+    prevState => {
+      if (prevState) {
+        let index = chordVoicings.findIndex(v => v.equals(prevState));
 
-      if (index != -1) {
-        return chordVoicings[index];
+        if (index != -1) {
+          return chordVoicings[index];
+        }
       }
-    }
 
-    return chordVoicings[0];
-  }, [chordVoicings]);
+      return chordVoicings[0];
+    },
+    [chordVoicings]
+  );
 
   const voicingIndex = chordVoicings.indexOf(voicing);
 
   const showVoicing = (index: number) => {
     if (index < 0) {
       index = 0;
-    }
-    else if (index >= chordVoicings.length) {
+    } else if (index >= chordVoicings.length) {
       index = chordVoicings.length - 1;
     }
 
     setVoicing(chordVoicings[index]);
-  }
+  };
 
   const notes = useMemo(() => {
     const played: Indicator[] = [];
@@ -173,63 +179,73 @@ export default ({ content, match, history }: Props) => {
   }, [voicing]);
 
   function updateChordNote(index: number, status: ChordNoteStatus) {
-    setChordNotes(chordNotes.map((n, i) => {
-      if (index === i) {
-        return {
-          ...n,
-          status
-        };
-      }
-      else if (status === 'Bass' && n.status === 'Bass') {
-        return {
-          ...n,
-          status: 'Required' as ChordNoteStatus
+    setChordNotes(
+      chordNotes.map((n, i) => {
+        if (index === i) {
+          return {
+            ...n,
+            status
+          };
+        } else if (status === 'Bass' && n.status === 'Bass') {
+          return {
+            ...n,
+            status: 'Required' as ChordNoteStatus
+          };
         }
-      }
 
-      return n;
-    }));
+        return n;
+      })
+    );
   }
 
   return (
     <>
-      { content(notes) }
+      {content(notes)}
 
       <div className="Explorer">
         <label className="Explorer-root Explorer-label">Root</label>
         <Listbox
+          name="chordRoot"
           className="Explorer-chord Explorer-list"
           options={ChordRoots}
           value={chordRoot}
-          onSelect={selected => history.push(`/explore/${ encodeURIComponent(selected.value) }/${ chordType }`)}
+          onSelect={selected =>
+            history.push(
+              `/explore/${encodeURIComponent(selected.value)}/${chordType}`
+            )
+          }
         />
 
         <label className="Explorer-chord-type Explorer-label">Chord</label>
         <Listbox
+          name="chordType"
           className="Explorer-chord-type Explorer-list"
           options={chordTypeKeys}
           value={chordType}
-          onSelect={selected => history.push(`/explore/${ encodeURIComponent(chordRoot.value) }/${ selected }`)}
+          onSelect={selected =>
+            history.push(
+              `/explore/${encodeURIComponent(chordRoot.value)}/${selected}`
+            )
+          }
         />
 
-        <label className="Explorer-chord-notes Explorer-label">
-          Notes
-        </label>
+        <label className="Explorer-chord-notes Explorer-label">Notes</label>
         <div className="Explorer-chord-notes Explorer-list">
-          { chordNotes.map((n, i) => {
-            const update = (e: SyntheticEvent<HTMLInputElement>) => 
+          {chordNotes.map((n, i) => {
+            const update = (e: SyntheticEvent<HTMLInputElement>) =>
               updateChordNote(i, e.currentTarget.value as ChordNoteStatus);
 
             return (
               <React.Fragment key={i}>
-                <span className="Explorer-chord-note-label">{ n.label }:</span>
+                <span className="Explorer-chord-note-label">{n.label}:</span>
                 <label>
                   <input
                     type="radio"
                     value="Bass"
                     checked={n.status === 'Bass'}
                     onChange={update}
-                  /> Bass
+                  />{' '}
+                  Bass
                 </label>
 
                 <label>
@@ -238,7 +254,8 @@ export default ({ content, match, history }: Props) => {
                     value="Required"
                     checked={n.status === 'Required'}
                     onChange={update}
-                  /> Required
+                  />{' '}
+                  Required
                 </label>
 
                 <label>
@@ -247,7 +264,8 @@ export default ({ content, match, history }: Props) => {
                     value="Optional"
                     checked={n.status === 'Optional'}
                     onChange={update}
-                  /> Optional
+                  />{' '}
+                  Optional
                 </label>
 
                 <label>
@@ -256,15 +274,19 @@ export default ({ content, match, history }: Props) => {
                     value="Omitted"
                     checked={n.status === 'Omitted'}
                     onChange={update}
-                  /> Omitted
+                  />{' '}
+                  Omitted
                 </label>
               </React.Fragment>
-            )
+            );
           })}
         </div>
 
-        <label className="Explorer-voicings Explorer-label">{ chordVoicings.length} Voicings</label>
+        <label className="Explorer-voicings Explorer-label">
+          {chordVoicings.length} Voicings
+        </label>
         <Listbox
+          name="voicings"
           className="Explorer-voicings Explorer-list"
           options={chordVoicings}
           value={voicing}
@@ -275,7 +297,9 @@ export default ({ content, match, history }: Props) => {
           <button onClick={() => showVoicing(0)}>|&lt;</button>
           <button onClick={() => showVoicing(voicingIndex - 1)}>&lt;</button>
           <button onClick={() => showVoicing(voicingIndex + 1)}>&gt;</button>
-          <button onClick={() => showVoicing(chordVoicings.length - 1)}>&gt;|</button>
+          <button onClick={() => showVoicing(chordVoicings.length - 1)}>
+            &gt;|
+          </button>
         </div>
       </div>
     </>
