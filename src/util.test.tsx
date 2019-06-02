@@ -1,6 +1,6 @@
 import { tmap, useDepState } from "./util";
 import React from 'react'
-import { render } from 'react-testing-library'
+import { render } from '@testing-library/react'
 
 describe('tmap', () => {
   it('should include first and last properties', () => {
