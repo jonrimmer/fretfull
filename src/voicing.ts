@@ -7,17 +7,20 @@ export class Voicings {
 
   getVoicings(tuning: Tuning, chord: Chord): Voicing[] {
     let voicingsCache = this.tuningCache.get(tuning);
-  
+
     if (!voicingsCache) {
-      this.tuningCache.set(tuning, voicingsCache = new Map());
+      this.tuningCache.set(tuning, (voicingsCache = new Map()));
     }
-  
+
     let voicings = voicingsCache.get(chord);
 
     if (!voicings) {
-      voicingsCache.set(chord, voicings = createVoicings(tuning, chord.notes, [], this.fretCount));
+      voicingsCache.set(
+        chord,
+        (voicings = createVoicings(tuning, chord.notes, [], this.fretCount))
+      );
     }
-  
+
     return voicings;
   }
 }
@@ -39,9 +42,12 @@ export class Voicing {
     const unmuted = notes.filter(n => n !== null) as number[];
     this.minFret = Math.min(...unmuted);
     this.maxFret = Math.max(...unmuted);
-    this.distance = notes.reduce<number>((a, b) => a + (b === null ? this.maxFret + 1 : b), 0);
+    this.distance = notes.reduce<number>(
+      (a, b) => a + (b === null ? this.maxFret + 1 : b),
+      0
+    );
     this.notes = notes;
-    this.strValue = this.notes.map(n => n === null ? 'x' : n).join(' ');
+    this.strValue = this.notes.map(n => (n === null ? 'x' : n)).join(' ');
   }
 
   toString() {
@@ -57,18 +63,31 @@ export class Voicing {
   }
 }
 
-export function createVoicings(tuning: Tuning, required: Note[], optional: Note[] = [], fretCount: number): Voicing[] {
+export function createVoicings(
+  tuning: Tuning,
+  required: Note[],
+  optional: Note[] = [],
+  fretCount: number
+): Voicing[] {
   const result: Voicing[] = [];
 
   function addCurrent(current: VoicingNotes) {
     const bassNoteIndex = current.findIndex(n => n !== null) as number;
-    const bassNote = addSemitones(tuning.notes[bassNoteIndex], current[bassNoteIndex] as number);
+    const bassNote = addSemitones(
+      tuning.notes[bassNoteIndex],
+      current[bassNoteIndex] as number
+    );
     const voicing = new Voicing(current, bassNote);
 
     result.push(voicing);
   }
 
-  function buildVoicing(openNotes: Note[], current: (number | null)[], unplaced: Note[], placed: Note[]) {
+  function buildVoicing(
+    openNotes: Note[],
+    current: (number | null)[],
+    unplaced: Note[],
+    placed: Note[]
+  ) {
     if (openNotes.length === 0) {
       if (unplaced.length === 0) {
         addCurrent(current);
@@ -86,8 +105,8 @@ export function createVoicings(tuning: Tuning, required: Note[], optional: Note[
 
     for (let n = 0; n < unplaced.length; n++) {
       const start = interval(openNote, unplaced[n].toString());
-  
-      for(let i = start; i < fretCount + 1; i += 12) {
+
+      for (let i = start; i < fretCount + 1; i += 12) {
         const newMin = Math.min(i, min);
         const newMax = Math.max(i, max);
 
@@ -112,21 +131,16 @@ export function createVoicings(tuning: Tuning, required: Note[], optional: Note[
 
       [...placed, ...optional].forEach(n => {
         const start = interval(openNote, n.toString());
-    
-        for(let i = start; i < fretCount + 1; i += 12) {
+
+        for (let i = start; i < fretCount + 1; i += 12) {
           const newMin = Math.min(i, min);
           const newMax = Math.max(i, max);
-  
+
           if (newMax - newMin > 4) {
             continue;
           }
 
-          buildVoicing(
-            remaining,
-            [...current, i],
-            unplaced,
-            placed
-          );
+          buildVoicing(remaining, [...current, i], unplaced, placed);
 
           possibilities++;
         }
@@ -137,22 +151,12 @@ export function createVoicings(tuning: Tuning, required: Note[], optional: Note[
       // silly variations where we're just unncessarily muting each string
       // in a given voicing.
       if (possibilities === 0 || placed.length === 0) {
-        buildVoicing(
-          remaining,
-          [...current, null],
-          unplaced,
-          placed
-        );
+        buildVoicing(remaining, [...current, null], unplaced, placed);
       }
     }
   }
 
-  buildVoicing(
-    tuning.notes,
-    [],
-    required,
-    []
-  );
+  buildVoicing(tuning.notes, [], required, []);
 
   result.sort((a, b) => a.distance - b.distance);
 

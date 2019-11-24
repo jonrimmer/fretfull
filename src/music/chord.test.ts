@@ -1,4 +1,4 @@
-import { majorTriad, minorTriad} from './chord';
+import { majorTriad, minorTriad } from './chord';
 import { interval, parseSpn } from './note';
 
 describe('Chord', () => {
@@ -18,13 +18,13 @@ describe('Chord', () => {
 });
 
 describe('interval', () => {
-  it('should return 0 for the same note', () =>{
+  it('should return 0 for the same note', () => {
     expect(interval(parseSpn('C3'), 'C')).toEqual(0);
   });
 
   it('should work for notes later in the octave', () => {
     expect(interval(parseSpn('C3'), 'F')).toEqual(5);
-  })
+  });
 
   it('should work for notes earlier in the octave', () => {
     expect(interval(parseSpn('A3'), 'C')).toEqual(3);

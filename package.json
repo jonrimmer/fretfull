@@ -3,22 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@types/classnames": "2.2.8",
-    "@types/jest": "24.0.13",
-    "@types/node": "12.0.4",
-    "@types/react": "16.8.19",
-    "@types/react-dom": "16.8.4",
-    "@types/react-router-dom": "4.3.3",
+    "@types/classnames": "2.2.9",
+    "@types/jest": "24.0.23",
+    "@types/node": "12.12.12",
+    "@types/react": "16.9.13",
+    "@types/react-dom": "16.9.4",
+    "@types/react-router-dom": "5.1.2",
     "classnames": "2.2.6",
-    "gh-pages": "2.0.1",
-    "node-sass": "4.12.0",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-router-dom": "5.0.0",
-    "react-scripts": "3.0.1",
-    "@testing-library/react": "8.0.1",
-    "typescript": "3.5.1",
-    "fsevents": "1.2.9"
+    "gh-pages": "2.1.1",
+    "node-sass": "4.13.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-router-dom": "5.1.2",
+    "react-scripts": "3.2.0",
+    "@testing-library/react": "9.3.2",
+    "typescript": "3.7.2",
+    "fsevents": "2.1.2"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -26,6 +26,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
+    "lint": "eslint ./src",
     "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
@@ -37,5 +38,11 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "homepage": "http://jonrimmer.github.io/fretfull"
+  "homepage": "http://jonrimmer.github.io/fretfull",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.8.0",
+    "@typescript-eslint/parser": "^2.8.0",
+    "eslint": "^6.7.0",
+    "eslint-plugin-react": "^7.16.0"
+  }
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, FC } from 'react';
 import './App.scss';
 import { newBoolArray } from './util';
 import Fretboard, { Indicator } from './Fretboard';
@@ -7,15 +7,22 @@ import Quiz from './Quiz';
 import GuitarStrings from './GuitarStrings';
 import Explorer from './Explorer';
 import Settings from './Settings';
-import { HashRouter as Router, Route, NavLink, Redirect } from 'react-router-dom';
+import {
+  HashRouter as Router,
+  Route,
+  NavLink,
+  Redirect,
+} from 'react-router-dom';
 import { TUNINGS, Tuning } from './music';
 
 const fretCount = 15;
 
-const App = () => {
+const App: FC = () => {
   const [tuning, setTuning] = useState(TUNINGS[0]);
   const [showOctave, setShowOctave] = useState(true);
-  const [activeStrings, setActiveStrings] = useState(newBoolArray(tuning.notes.length));
+  const [activeStrings, setActiveStrings] = useState(
+    newBoolArray(tuning.notes.length)
+  );
 
   const toggleGuitarString = (toToggle: number) => {
     let value = [...activeStrings];
@@ -23,38 +30,58 @@ const App = () => {
     setActiveStrings(value);
   };
 
-  const updateSettings = (options: { showOctave?: boolean; tuning?: Tuning}) => {
-    if (typeof options.showOctave !== 'undefined') setShowOctave(options.showOctave);
+  const updateSettings = (options: {
+    showOctave?: boolean;
+    tuning?: Tuning;
+  }) => {
+    if (typeof options.showOctave !== 'undefined')
+      setShowOctave(options.showOctave);
     if (options.tuning) setTuning(options.tuning);
-  }
+  };
 
-  const neck = (notes: Indicator[]) =>
-    <Fretboard
-      fretCount={fretCount}
-      tuning={tuning}
-      notes={notes}
-    >
+  const neck = (notes: Indicator[]) => (
+    <Fretboard fretCount={fretCount} tuning={tuning} notes={notes}>
       <GuitarStrings
         activeStrings={activeStrings}
         onToggle={toggleGuitarString}
       ></GuitarStrings>
-    </Fretboard>;
-  
+    </Fretboard>
+  );
+
   return (
     <Router>
       <div className="App">
-        <SettingsContext.Provider value={{ showOctave, tuning, fretCount, update: updateSettings }}>
+        <SettingsContext.Provider
+          value={{
+            showOctave,
+            tuning,
+            fretCount,
+            update: updateSettings,
+          }}
+        >
           <header className="App-header">
             <h1 className="App-title">Fretfull</h1>
             <nav className="App-nav">
-              <NavLink className="App-explore-link" to="/explore">Explore</NavLink>
-              <NavLink className="App-quiz-link" to="/quiz">Quiz</NavLink>
+              <NavLink className="App-explore-link" to="/explore">
+                Explore
+              </NavLink>
+              <NavLink className="App-quiz-link" to="/quiz">
+                Quiz
+              </NavLink>
             </nav>
             <Settings></Settings>
           </header>
 
-          <Route exact path="/" render={() => <Redirect to="/explore/A/Major triad" />}></Route>
-          <Route exact path="/explore" render={() => <Redirect to="/explore/A/Major triad" />}></Route>
+          <Route
+            exact
+            path="/"
+            render={() => <Redirect to="/explore/A/Major triad" />}
+          ></Route>
+          <Route
+            exact
+            path="/explore"
+            render={() => <Redirect to="/explore/A/Major triad" />}
+          ></Route>
 
           <Route
             exact
@@ -64,17 +91,14 @@ const App = () => {
 
           <Route
             path="/quiz"
-            render={() => 
-              <Quiz
-                includedStrings={activeStrings}
-                content={neck}
-              ></Quiz>
-            }
+            render={() => (
+              <Quiz includedStrings={activeStrings} content={neck}></Quiz>
+            )}
           />
         </SettingsContext.Provider>
       </div>
     </Router>
   );
-}
+};
 
 export default App;

@@ -8,8 +8,7 @@
   grid-template-areas:
     'header'
     'fretboard'
-    'content'
-  ;
+    'content';
   grid-template-rows: auto auto 1fr;
   grid-template-columns: 1fr;
   grid-gap: 24px;
@@ -19,11 +18,11 @@
   display: grid;
   grid-area: header;
   grid-template: auto / auto 1fr auto;
-  background: #F0F0F0;
+  background: #f0f0f0;
   grid-column-gap: 16px;
   align-items: center;
   padding: 0 12px;
-  border-bottom: 1px solid #DDD;
+  border-bottom: 1px solid #ddd;
 }
 
 .App-title {
@@ -41,7 +40,8 @@
   grid-area: 1 / 1 / 1 / 2;
 }
 
-.Explorer, .Quiz {
+.Explorer,
+.Quiz {
   grid-area: content;
   min-height: 0;
 }
@@ -49,15 +49,15 @@
 .App-nav a {
   padding: 12px;
   text-align: center;
-  border-left: 1px solid #CCC;
+  border-left: 1px solid #ccc;
   width: 100px;
 
   &:last-child {
-    border-right: 1px solid #CCC;
+    border-right: 1px solid #ccc;
   }
 
   &.active {
-    background-color: #F8f8f8;
+    background-color: #f8f8f8;
   }
 }
 

@@ -1,7 +1,7 @@
 .Fret {
-  border-right: 3px solid #CCC;
+  border-right: 3px solid #ccc;
   position: relative;
-  
+
   .dot {
     display: block;
     width: 20px;
@@ -11,19 +11,18 @@
     position: absolute;
     left: calc(50% - 10px);
   }
-  
+
   .dot.single {
     top: calc(50% - 10px);
   }
-  
+
   .dot.double1 {
     top: calc(25% - 10px);
   }
-  
+
   .dot.double2 {
     top: calc(75% - 10px);
   }
-  
 }
 
 .Fret-number {

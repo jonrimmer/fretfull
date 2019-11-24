@@ -1,21 +1,21 @@
-export const LETTER_TO_NUM: {[tone: string]: number} = {
-  'C': 0,
+export const LETTER_TO_NUM: { [tone: string]: number } = {
+  C: 0,
   'C#': 1,
-  'Db': 1,
-  'D': 2,
+  Db: 1,
+  D: 2,
   'D#': 3,
-  'Eb': 3,
-  'E': 4,
-  'F': 5,
+  Eb: 3,
+  E: 4,
+  F: 5,
   'F#': 6,
-  'Gb': 6,
-  'G': 7,
+  Gb: 6,
+  G: 7,
   'G#': 8,
-  'Ab': 8,
-  'A': 9,
+  Ab: 8,
+  A: 9,
   'A#': 10,
-  'Bb': 10,
-  'B': 11
+  Bb: 10,
+  B: 11,
 };
 
 export const NUM_TO_LETTER = [
@@ -30,9 +30,8 @@ export const NUM_TO_LETTER = [
   'G#',
   'A',
   'A#',
-  'B'
+  'B',
 ];
-
 
 export enum INTERVALS {
   Unison = 0,
@@ -47,7 +46,7 @@ export enum INTERVALS {
   MajorSixth = 9,
   MinorSeventh = 10,
   MajorSeventh = 11,
-  Octave = 12
+  Octave = 12,
 }
 
 export class Note {
@@ -71,9 +70,11 @@ export class Note {
 }
 
 export function toneEquals(a: string, b: string): boolean {
-  return LETTER_TO_NUM.hasOwnProperty(a) &&
+  return (
+    LETTER_TO_NUM.hasOwnProperty(a) &&
     LETTER_TO_NUM.hasOwnProperty(b) &&
-    LETTER_TO_NUM[a] === LETTER_TO_NUM[b];
+    LETTER_TO_NUM[a] === LETTER_TO_NUM[b]
+  );
 }
 
 export function parseSpn(spn: string | Note): Note {
@@ -111,16 +112,12 @@ export function addSemitones(note: Note, semitones: number) {
   if (tone < 0) {
     tone += 12;
     octave--;
-  }
-  else if (tone >= 12) {
+  } else if (tone >= 12) {
     tone -= 12;
     octave++;
   }
 
   octave += (semitones / 12) | 0;
 
-  return new Note(
-    NUM_TO_LETTER[tone],
-    octave
-  );
+  return new Note(NUM_TO_LETTER[tone], octave);
 }

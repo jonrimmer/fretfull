@@ -1,4 +1,10 @@
-import React, { useContext, ReactNode, useMemo, SyntheticEvent } from 'react';
+import React, {
+  useContext,
+  ReactNode,
+  useMemo,
+  SyntheticEvent,
+  FC,
+} from 'react';
 import { Indicator, positionToGridArea } from './Fretboard';
 import { SettingsContext } from './settings-context';
 import { createVoicings, Voicing } from './voicing';
@@ -22,7 +28,7 @@ import {
   halfDiminishedSeventh,
   minorMajorSeventh,
   Note,
-  Chord
+  Chord,
 } from './music';
 
 interface Params {
@@ -30,7 +36,7 @@ interface Params {
   chordType: string;
 }
 
-interface Props extends RouteChildrenProps<Params> {
+interface ExporerProps extends RouteChildrenProps<Params> {
   content: (notes: Indicator[]) => ReactNode;
 }
 
@@ -58,7 +64,7 @@ const ChordRoots = [
   new ChordRoot('F'),
   new ChordRoot('F#', 'F# / Gb'),
   new ChordRoot('G'),
-  new ChordRoot('G#', 'G# / Ab')
+  new ChordRoot('G#', 'G# / Ab'),
 ];
 
 const ChordParts = ['Root', '3rd', '5th', '7th'];
@@ -84,12 +90,16 @@ const chordTypes: { [key: string]: (note: Note | string) => Chord } = {
   'Augmented 7th': augmentedSeventh,
   'Diminished 7th': diminishedSeventh,
   'Half-diminished 7th': halfDiminishedSeventh,
-  'Minor-major 7th': minorMajorSeventh
+  'Minor-major 7th': minorMajorSeventh,
 };
 
 const chordTypeKeys = Object.keys(chordTypes);
 
-export default ({ content, match, history }: Props) => {
+const Explorer: FC<ExporerProps> = ({
+  content,
+  match,
+  history,
+}: ExporerProps) => {
   const { tuning, fretCount } = useContext(SettingsContext);
 
   let { chordRoot: crParam, chordType } = match
@@ -98,7 +108,8 @@ export default ({ content, match, history }: Props) => {
 
   crParam = decodeURIComponent(crParam);
 
-  const chordRoot = ChordRoots.find(cr => cr.value == crParam) || ChordRoots[0];
+  const chordRoot =
+    ChordRoots.find(cr => cr.value === crParam) || ChordRoots[0];
 
   const chord = useMemo(() => {
     return chordTypes[chordType](chordRoot.value + '3');
@@ -110,7 +121,7 @@ export default ({ content, match, history }: Props) => {
     return chord.notes.map<ChordNote>((note, i) => ({
       note,
       label: note.toString() + ' (' + ChordParts[i] + ')',
-      status: i === 0 ? 'Bass' : i === 2 && isSeventh ? 'Optional' : 'Required'
+      status: i === 0 ? 'Bass' : i === 2 && isSeventh ? 'Optional' : 'Required',
     }));
   }, [chord]);
 
@@ -131,14 +142,14 @@ export default ({ content, match, history }: Props) => {
     }
 
     return result;
-  }, [tuning, chordNotes]);
+  }, [tuning, fretCount, chordNotes]);
 
   const [voicing, setVoicing] = useDepState<Voicing>(
     prevState => {
       if (prevState) {
         let index = chordVoicings.findIndex(v => v.equals(prevState));
 
-        if (index != -1) {
+        if (index !== -1) {
           return chordVoicings[index];
         }
       }
@@ -170,13 +181,13 @@ export default ({ content, match, history }: Props) => {
         played.push({
           type: note.tone === chord.rootNote.tone ? 'chordRoot' : 'indicator',
           note,
-          gridArea: positionToGridArea(string, fret)
+          gridArea: positionToGridArea(string, fret),
         });
       }
     });
 
     return played;
-  }, [voicing]);
+  }, [voicing, chord.rootNote.tone, tuning.notes]);
 
   function updateChordNote(index: number, status: ChordNoteStatus) {
     setChordNotes(
@@ -184,12 +195,12 @@ export default ({ content, match, history }: Props) => {
         if (index === i) {
           return {
             ...n,
-            status
+            status,
           };
         } else if (status === 'Bass' && n.status === 'Bass') {
           return {
             ...n,
-            status: 'Required' as ChordNoteStatus
+            status: 'Required' as ChordNoteStatus,
           };
         }
 
@@ -305,3 +316,5 @@ export default ({ content, match, history }: Props) => {
     </>
   );
 };
+
+export default Explorer;

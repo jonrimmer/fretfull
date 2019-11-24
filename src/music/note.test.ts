@@ -28,8 +28,8 @@ describe('parseSpn', () => {
   it('parses scientific note notation', () => {
     expect(parseSpn('A#4')).toEqual({
       tone: 'A#',
-      octave: 4
-    })
+      octave: 4,
+    });
   });
 });
 
@@ -39,14 +39,14 @@ describe('addSemitones', () => {
   it('should correctly modify the letter and octave', () => {
     expect(addSemitones(original, 13)).toEqual({
       tone: 'C#',
-      octave: 5
+      octave: 5,
     });
-  })
+  });
 
   it('should handle negative values', () => {
     expect(addSemitones(original, -1)).toEqual({
       tone: 'B',
-      octave: 3
+      octave: 3,
     });
-  })
+  });
 });

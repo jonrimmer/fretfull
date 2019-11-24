@@ -1,4 +1,10 @@
-import React, { ReactNode, useState, SyntheticEvent, useContext } from 'react';
+import React, {
+  ReactNode,
+  useState,
+  SyntheticEvent,
+  useContext,
+  FC,
+} from 'react';
 import { Indicator, positionToGridArea } from './Fretboard';
 import { getRandomInt } from './util';
 import { SettingsContext } from './settings-context';
@@ -16,7 +22,10 @@ interface Question {
   fret: number;
 }
 
-const computeRandomQuestion = (includedStrings: boolean[], fretCount: number): Question => {
+const computeRandomQuestion = (
+  includedStrings: boolean[],
+  fretCount: number
+): Question => {
   const strings = includedStrings.reduce<number[]>((acc, val, i) => {
     if (val) {
       acc.push(i);
@@ -28,21 +37,21 @@ const computeRandomQuestion = (includedStrings: boolean[], fretCount: number): Q
   return {
     type: 'note',
     string: strings[getRandomInt(strings.length)],
-    fret: getRandomInt(fretCount)
+    fret: getRandomInt(fretCount),
   };
 };
 
-interface Params {
+interface QuizProps {
   content: (notes: Indicator[]) => ReactNode;
   includedStrings: boolean[];
 }
 
-export default ({ content, includedStrings }: Params) => {
+const Quiz: FC<QuizProps> = ({ content, includedStrings }) => {
   const { fretCount, tuning } = useContext(SettingsContext);
 
   const [answer, setAnswer] = useState('');
   const [judgement, setJudgement] = useState<Judgement | null>(null);
-  const [question, setQuestion] = useState(() => 
+  const [question, setQuestion] = useState(() =>
     computeRandomQuestion(includedStrings, fretCount)
   );
 
@@ -52,16 +61,15 @@ export default ({ content, includedStrings }: Params) => {
 
     if (toneEquals(answer, solution.toString())) {
       setQuestion(computeRandomQuestion(includedStrings, fretCount));
-      
+
       setJudgement({
         correct: true,
-        id: Date.now()
+        id: Date.now(),
       });
-    }
-    else {
+    } else {
       setJudgement({
         correct: false,
-        id: Date.now()
+        id: Date.now(),
       });
     }
 
@@ -74,20 +82,19 @@ export default ({ content, includedStrings }: Params) => {
     setQuestion(computeRandomQuestion(includedStrings, fretCount));
   }
 
-  const notes: Indicator[] = [{
-    note: tuning.positionToNote(question.string, question.fret),
-    type: 'quiz',
-    gridArea: positionToGridArea(question.string, question.fret)
-  }];
+  const notes: Indicator[] = [
+    {
+      note: tuning.positionToNote(question.string, question.fret),
+      type: 'quiz',
+      gridArea: positionToGridArea(question.string, question.fret),
+    },
+  ];
 
   return (
     <>
-      { content(notes) }
+      {content(notes)}
       <div className="Quiz">
-        <form 
-          className="Quiz-question"
-          onSubmit={event => handleSubmit(event)}
-        >
+        <form className="Quiz-question" onSubmit={event => handleSubmit(event)}>
           <h1>What is the higlighted note?</h1>
           <input
             className="Quiz-answer-field"
@@ -95,17 +102,21 @@ export default ({ content, includedStrings }: Params) => {
             value={answer}
             onChange={event => setAnswer(event.target.value)}
           />
-          {
-            judgement ?
-              <div
-                className={'Quiz-judgement ' + (judgement.correct ? 'correct' : 'incorrect') }
-                key={judgement.id}
-              >
-                { judgement.correct ? 'Correct' : 'Incorrect' }
-              </div> : null
-          }
+          {judgement ? (
+            <div
+              className={
+                'Quiz-judgement ' +
+                (judgement.correct ? 'correct' : 'incorrect')
+              }
+              key={judgement.id}
+            >
+              {judgement.correct ? 'Correct' : 'Incorrect'}
+            </div>
+          ) : null}
         </form>
       </div>
     </>
-  )
-}
+  );
+};
+
+export default Quiz;

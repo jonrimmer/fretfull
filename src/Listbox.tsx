@@ -1,7 +1,6 @@
 import React, { useRef, KeyboardEvent, useEffect } from 'react';
 import './Listbox.scss';
 import cn from 'classnames';
-import { isStringArray } from './util';
 
 export interface Option {
   label: string;
@@ -16,7 +15,7 @@ interface Props {
   onSelect: (value: any) => void;
 }
 
-export default React.memo(
+const Listbox = React.memo(
   ({ name, options, className, value, onSelect }: Props) => {
     const ulEl = useRef<HTMLUListElement>(null);
     const selectedOptionIndex = options.findIndex(option => option === value);
@@ -108,8 +107,11 @@ export default React.memo(
           <li
             key={i}
             id={name + '_opt' + i}
-            className={cn('Listbox-item', { selected: value === o })}
+            className={cn('Listbox-item', {
+              selected: value === o,
+            })}
             role="option"
+            aria-selected={value === 0}
             onClick={() => onSelect(o)}
           >
             {o.toString()}
@@ -119,3 +121,5 @@ export default React.memo(
     );
   }
 );
+
+export default Listbox;

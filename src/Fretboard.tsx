@@ -1,4 +1,4 @@
-import React, { useMemo, ReactNode, useContext } from 'react';
+import React, { useMemo, ReactNode, useContext, FC } from 'react';
 import { tmap } from './util';
 import './Fretboard.scss';
 import Fret from './Fret';
@@ -7,8 +7,8 @@ import { SettingsContext } from './settings-context';
 import { Tuning, Note } from './music';
 const headSize = 100;
 
-export const positionToGridArea = 
-  (string: number, fret: number) => `s${ string + 1 } / span 1 / s${string + 1} / f${ fret }`;
+export const positionToGridArea = (string: number, fret: number) =>
+  `s${string + 1} / span 1 / s${string + 1} / f${fret}`;
 
 export const computeFretSizes = (fretCount: number): number[] => {
   const frets = [];
@@ -21,23 +21,38 @@ export const computeFretSizes = (fretCount: number): number[] => {
   }
 
   return frets;
-}
+};
 
 export function gridColumns(frets: number[]): string {
-  return '[start] auto [head] ' + headSize  + 'px ' + 
-    tmap(frets, (size, i, { first, last }) =>
-      (first ? '[nut f0] ' : '') +
-      size + 'fr' +
-      ' [f' + (i + 1) + (last ? ' fretboard-end]' : ']')
-    ).join(' ') + ' auto [end]'
+  return (
+    '[start] auto [head] ' +
+    headSize +
+    'px ' +
+    tmap(
+      frets,
+      (size, i, { first, last }) =>
+        (first ? '[nut f0] ' : '') +
+        size +
+        'fr' +
+        ' [f' +
+        (i + 1) +
+        (last ? ' fretboard-end]' : ']')
+    ).join(' ') +
+    ' auto [end]'
+  );
 }
 
 export function gridRows(tuning: Tuning): string {
   const l = tuning.notes.length;
-  return '[top] auto ' +
-    tmap(tuning.notes, (_note, i, { first }) =>
-      (first ? '[top-edge ' : '[') + 's' + (l - i) + '] 40px'
-    ).join(' ') + ' [bottom-edge s0]'
+  return (
+    '[top] auto ' +
+    tmap(
+      tuning.notes,
+      (_note, i, { first }) =>
+        (first ? '[top-edge ' : '[') + 's' + (l - i) + '] 40px'
+    ).join(' ') +
+    ' [bottom-edge s0]'
+  );
 }
 
 export interface Indicator {
@@ -46,70 +61,65 @@ export interface Indicator {
   gridArea: string;
 }
 
-interface Props {
+interface FretboardProps {
   children?: ReactNode;
   fretCount: number;
   tuning: Tuning;
   notes: Indicator[];
 }
 
-export default function({children, fretCount, tuning, notes}: Props) {
-  const [
-    fretSizes,
-    columns,
-  ] = useMemo<[number[], string]>(() => {
+const Fretboard: FC<FretboardProps> = ({
+  children,
+  fretCount,
+  tuning,
+  notes,
+}) => {
+  const [fretSizes, columns] = useMemo<[number[], string]>(() => {
     const frets = computeFretSizes(fretCount);
 
-    return [
-      frets,
-      gridColumns(frets)
-    ]
+    return [frets, gridColumns(frets)];
   }, [fretCount]);
 
   const { showOctave } = useContext(SettingsContext);
 
   const rows = useMemo(() => gridRows(tuning), [tuning]);
 
-  return <div
-    className="Fretboard"
-    style={{
-      gridTemplateColumns: columns,
-      gridTemplateRows: rows
-    }}
-  >
+  return (
     <div
-      className="Fretboard-head"
+      className="Fretboard"
       style={{
-        gridArea: `top-edge / head / bottom-edge / nut`
+        gridTemplateColumns: columns,
+        gridTemplateRows: rows,
       }}
     >
-    </div>
-    <div
-      className="Fretboard-fingerboard"
-      style={{
-        gridArea: `top-edge / nut / bottom-edge / fretboard-end`
-      }}
-    ></div>
+      <div
+        className="Fretboard-head"
+        style={{
+          gridArea: `top-edge / head / bottom-edge / nut`,
+        }}
+      ></div>
+      <div
+        className="Fretboard-fingerboard"
+        style={{
+          gridArea: `top-edge / nut / bottom-edge / fretboard-end`,
+        }}
+      ></div>
 
-    { children }
+      {children}
 
-    {
-      notes.map((note, i) =>
+      {notes.map((note, i) => (
         <NoteIndicator
           key={'note_' + i}
           showOctave={showOctave}
           {...note}
         ></NoteIndicator>
-      )
-    }
+      ))}
 
-    {
-      fretSizes.map((_size, i) =>
-        <Fret
-          key={'fret' + i}
-          num={i}
-        ></Fret>
-      )
-    }
-  </div>
-}
+      {fretSizes.map((_size, i) => (
+        <Fret key={'fret' + i} num={i}></Fret>
+      ))}
+    </div>
+  );
+};
+
+export default Fretboard;

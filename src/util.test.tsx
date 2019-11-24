@@ -1,6 +1,6 @@
-import { tmap, useDepState } from "./util";
-import React from 'react'
-import { render } from '@testing-library/react'
+import { tmap, useDepState } from './util';
+import React from 'react';
+import { render } from '@testing-library/react';
 
 describe('tmap', () => {
   it('should include first and last properties', () => {
@@ -10,19 +10,17 @@ describe('tmap', () => {
 
       if (i === 0) {
         expect(first).toBeTruthy();
-      }
-      else {
+      } else {
         expect(first).toBeFalsy();
       }
-      
+
       if (i === 2) {
         expect(last).toBeTruthy();
-      }
-      else {
+      } else {
         expect(last).toBeFalsy();
       }
 
-      return item + '_'
+      return item + '_';
     });
 
     expect(called).toEqual(3);
@@ -31,27 +29,31 @@ describe('tmap', () => {
 });
 
 function EffectfulComponent({ options }: { options: string[] }) {
-  const [value, setValue] = useDepState((prevState?: string) => {
-    if (prevState && options.includes(prevState)) {
-      return prevState;
-
-      
-    }
-    else {
-      return options[0];
-    }
-  }, [options]);
-  return <>
-    <span>{value}</span>
-    <button onClick={() => setValue('C')}></button>
-  </>
+  const [value, setValue] = useDepState(
+    (prevState?: string) => {
+      if (prevState && options.includes(prevState)) {
+        return prevState;
+      } else {
+        return options[0];
+      }
+    },
+    [options]
+  );
+  return (
+    <>
+      <span>{value}</span>
+      <button onClick={() => setValue('C')}></button>
+    </>
+  );
 }
 
 describe('useDepState', () => {
   const options = ['A', 'B', 'C'];
   const changedOptions = ['B', 'C'];
 
-  const { container, rerender } = render(<EffectfulComponent options={options} />);
+  const { container, rerender } = render(
+    <EffectfulComponent options={options} />
+  );
   const span = container.firstChild!;
   const btn = span.nextSibling! as HTMLButtonElement;
 
