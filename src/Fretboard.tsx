@@ -1,10 +1,11 @@
 import React, { useMemo, ReactNode, useContext, FC } from 'react';
 import { tmap } from './util';
-import './Fretboard.scss';
 import Fret from './Fret';
 import NoteIndicator from './NoteIndicator';
 import { SettingsContext } from './settings-context';
 import { Tuning, Note } from './music';
+import { FretboardContainer } from './Fretboard.styles';
+
 const headSize = 100;
 
 export const positionToGridArea = (string: number, fret: number) =>
@@ -85,21 +86,20 @@ const Fretboard: FC<FretboardProps> = ({
   const rows = useMemo(() => gridRows(tuning), [tuning]);
 
   return (
-    <div
-      className="Fretboard"
+    <FretboardContainer
       style={{
         gridTemplateColumns: columns,
         gridTemplateRows: rows,
       }}
     >
       <div
-        className="Fretboard-head"
+        className="head"
         style={{
           gridArea: `top-edge / head / bottom-edge / nut`,
         }}
       ></div>
       <div
-        className="Fretboard-fingerboard"
+        className="fingerboard"
         style={{
           gridArea: `top-edge / nut / bottom-edge / fretboard-end`,
         }}
@@ -118,7 +118,7 @@ const Fretboard: FC<FretboardProps> = ({
       {fretSizes.map((_size, i) => (
         <Fret key={'fret' + i} num={i}></Fret>
       ))}
-    </div>
+    </FretboardContainer>
   );
 };
 
