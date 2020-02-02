@@ -1,5 +1,4 @@
 import React, { useState, FC } from 'react';
-import './App.scss';
 import { newBoolArray } from './util';
 import Fretboard, { Indicator } from './Fretboard';
 import { SettingsContext } from './settings-context';
@@ -14,6 +13,7 @@ import {
   Redirect,
 } from 'react-router-dom';
 import { TUNINGS, Tuning } from './music';
+import { AppContainer, AppHeader, AppTitle, AppNav } from './App.styles';
 
 const fretCount = 15;
 
@@ -50,7 +50,7 @@ const App: FC = () => {
 
   return (
     <Router>
-      <div className="App">
+      <AppContainer>
         <SettingsContext.Provider
           value={{
             showOctave,
@@ -59,18 +59,18 @@ const App: FC = () => {
             update: updateSettings,
           }}
         >
-          <header className="App-header">
-            <h1 className="App-title">Fretfull</h1>
-            <nav className="App-nav">
+          <AppHeader>
+            <AppTitle>Fretfull</AppTitle>
+            <AppNav>
               <NavLink className="App-chords-link" to="/chords">
                 Chords
               </NavLink>
               <NavLink className="App-quiz-link" to="/quiz">
                 Quiz
               </NavLink>
-            </nav>
+            </AppNav>
             <Settings></Settings>
-          </header>
+          </AppHeader>
 
           <Route
             exact
@@ -98,7 +98,7 @@ const App: FC = () => {
             )}
           />
         </SettingsContext.Provider>
-      </div>
+      </AppContainer>
     </Router>
   );
 };

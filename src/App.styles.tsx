@@ -1,4 +1,6 @@
-.App {
+import styled from 'styled-components';
+
+export const AppContainer = styled.div`
   display: grid;
   position: absolute;
   top: 0;
@@ -12,9 +14,15 @@
   grid-template-rows: auto auto 1fr;
   grid-template-columns: 1fr;
   grid-gap: 24px;
-}
 
-.App-header {
+  .Explorer,
+  .Quiz {
+    grid-area: content;
+    min-height: 0;
+  }
+`;
+
+export const AppHeader = styled.header`
   display: grid;
   grid-area: header;
   grid-template: auto / auto 1fr auto;
@@ -23,44 +31,31 @@
   align-items: center;
   padding: 0 12px;
   border-bottom: 1px solid #ddd;
-}
+`;
 
-.App-title {
+export const AppTitle = styled.h1`
   grid-area: 1 / 1;
   font-size: inherit;
   align-self: center;
-}
+`;
 
-.App-nav {
+export const AppNav = styled.nav`
   grid-area: 1 / 2;
   display: flex;
-}
 
-.App-mode {
-  grid-area: 1 / 1 / 1 / 2;
-}
+  a {
+    padding: 12px;
+    text-align: center;
+    border-left: 1px solid #ccc;
+    width: 100px;
 
-.Explorer,
-.Quiz {
-  grid-area: content;
-  min-height: 0;
-}
+    &:last-child {
+      border-right: 1px solid #ccc;
+    }
 
-.App-nav a {
-  padding: 12px;
-  text-align: center;
-  border-left: 1px solid #ccc;
-  width: 100px;
-
-  &:last-child {
-    border-right: 1px solid #ccc;
+    &.active {
+      background-color: #f8f8f8;
+      font-weight: bold;
+    }
   }
-
-  &.active {
-    background-color: #f8f8f8;
-  }
-}
-
-.App-nav a.active {
-  font-weight: bold;
-}
+`;
