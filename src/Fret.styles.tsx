@@ -1,4 +1,6 @@
-.Fret {
+import styled from 'styled-components';
+
+export const FretContainer = styled.div`
   border-right: 3px solid #ccc;
   position: relative;
 
@@ -23,10 +25,10 @@
   .dot.double2 {
     top: calc(75% - 10px);
   }
-}
+`;
 
-.Fret-number {
+export const FretNumber = styled.span`
   display: block;
   justify-self: center;
   margin: 6px;
-}
+`;

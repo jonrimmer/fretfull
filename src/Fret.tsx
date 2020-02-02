@@ -1,5 +1,5 @@
 import React, { ReactNode, FC } from 'react';
-import './Fret.scss';
+import { FretContainer, FretNumber } from './Fret.styles';
 
 function dots(i: number): ReactNode {
   return i === 2 || i === 4 || i === 6 || i === 8 || i === 14 ? (
@@ -18,22 +18,20 @@ interface FretProps {
 
 const Fret: FC<FretProps> = ({ num }) => (
   <>
-    <span
-      className="Fret-number"
+    <FretNumber
       style={{
         gridArea: `top / f${num}`,
       }}
     >
       {num + 1}
-    </span>
-    <div
-      className="Fret"
+    </FretNumber>
+    <FretContainer
       style={{
         gridArea: `top-edge / f${num} / bottom-edge / f${num + 1}`,
       }}
     >
       {dots(num)}
-    </div>
+    </FretContainer>
   </>
 );
 
