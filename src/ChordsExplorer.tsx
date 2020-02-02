@@ -9,7 +9,6 @@ import { Indicator, positionToGridArea } from './Fretboard';
 import { SettingsContext } from './settings-context';
 import { createVoicings, Voicing } from './voicing';
 import Listbox from './Listbox';
-import './ChordsExplorer.scss';
 import { RouteChildrenProps } from 'react-router';
 import { useDepState } from './util';
 import {
@@ -30,6 +29,7 @@ import {
   Note,
   Chord,
 } from './music';
+import { ChordsExplorerContainer } from './ChordsExplorer.styles';
 
 interface Params {
   chordRoot: string;
@@ -212,12 +212,11 @@ const ChordsExplorer: FC<ChordsExporerProps> = ({
   return (
     <>
       {content(notes)}
-
-      <div className="ChordsExplorer">
-        <label className="ChordsExplorer-root ChordsExplorer-label">Root</label>
+      <ChordsExplorerContainer>
+        <label className="root label">Root</label>
         <Listbox
           name="chordRoot"
-          className="ChordsExplorer-chord ChordsExplorer-list"
+          className="chord list"
           options={ChordRoots}
           value={chordRoot}
           onSelect={selected =>
@@ -227,12 +226,10 @@ const ChordsExplorer: FC<ChordsExporerProps> = ({
           }
         />
 
-        <label className="ChordsExplorer-chord-type ChordsExplorer-label">
-          Chord
-        </label>
+        <label className="chord-type label">Chord</label>
         <Listbox
           name="chordType"
-          className="ChordsExplorer-chord-type ChordsExplorer-list"
+          className="chord-type list"
           options={chordTypeKeys}
           value={chordType}
           onSelect={selected =>
@@ -242,19 +239,15 @@ const ChordsExplorer: FC<ChordsExporerProps> = ({
           }
         />
 
-        <label className="ChordsExplorer-chord-notes ChordsExplorer-label">
-          Notes
-        </label>
-        <div className="ChordsExplorer-chord-notes ChordsExplorer-list">
+        <label className="chord-notes label">Notes</label>
+        <div className="chord-notes list">
           {chordNotes.map((n, i) => {
             const update = (e: SyntheticEvent<HTMLInputElement>) =>
               updateChordNote(i, e.currentTarget.value as ChordNoteStatus);
 
             return (
               <React.Fragment key={i}>
-                <span className="ChordsExplorer-chord-note-label">
-                  {n.label}:
-                </span>
+                <span className="chord-note-label">{n.label}:</span>
                 <label>
                   <input
                     type="radio"
@@ -299,18 +292,18 @@ const ChordsExplorer: FC<ChordsExporerProps> = ({
           })}
         </div>
 
-        <label className="ChordsExplorer-voicings ChordsExplorer-label">
+        <label className="voicings label">
           {chordVoicings.length} Voicings
         </label>
         <Listbox
           name="voicings"
-          className="ChordsExplorer-voicings ChordsExplorer-list"
+          className="voicings list"
           options={chordVoicings}
           value={voicing}
           onSelect={value => setVoicing(value)}
         />
 
-        <div className="ChordsExplorer-voicings-nav">
+        <div className="voicings-nav">
           <button onClick={() => showVoicing(0)}>|&lt;</button>
           <button onClick={() => showVoicing(voicingIndex - 1)}>&lt;</button>
           <button onClick={() => showVoicing(voicingIndex + 1)}>&gt;</button>
@@ -318,7 +311,7 @@ const ChordsExplorer: FC<ChordsExporerProps> = ({
             &gt;|
           </button>
         </div>
-      </div>
+      </ChordsExplorerContainer>
     </>
   );
 };
