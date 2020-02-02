@@ -5,7 +5,7 @@ import Fretboard, { Indicator } from './Fretboard';
 import { SettingsContext } from './settings-context';
 import Quiz from './Quiz';
 import GuitarStrings from './GuitarStrings';
-import Explorer from './Explorer';
+import ChordsExplorer from './ChordsExplorer';
 import Settings from './Settings';
 import {
   HashRouter as Router,
@@ -62,8 +62,8 @@ const App: FC = () => {
           <header className="App-header">
             <h1 className="App-title">Fretfull</h1>
             <nav className="App-nav">
-              <NavLink className="App-explore-link" to="/explore">
-                Explore
+              <NavLink className="App-chords-link" to="/chords">
+                Chords
               </NavLink>
               <NavLink className="App-quiz-link" to="/quiz">
                 Quiz
@@ -75,18 +75,20 @@ const App: FC = () => {
           <Route
             exact
             path="/"
-            render={() => <Redirect to="/explore/A/Major triad" />}
+            render={() => <Redirect to="/chords/A/Major triad" />}
           ></Route>
           <Route
             exact
-            path="/explore"
-            render={() => <Redirect to="/explore/A/Major triad" />}
+            path="/chords"
+            render={() => <Redirect to="/chords/A/Major triad" />}
           ></Route>
 
           <Route
             exact
-            path="/explore/:chordRoot/:chordType"
-            render={props => <Explorer content={neck} {...props}></Explorer>}
+            path="/chords/:chordRoot/:chordType"
+            render={props => (
+              <ChordsExplorer content={neck} {...props}></ChordsExplorer>
+            )}
           />
 
           <Route

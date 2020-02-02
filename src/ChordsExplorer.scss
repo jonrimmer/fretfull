@@ -1,4 +1,4 @@
-.Explorer {
+.ChordsExplorer {
   display: grid;
   grid-template-columns: 1fr 1fr 1.2fr 1fr auto;
   grid-template-rows: auto 1fr;
@@ -6,32 +6,32 @@
   margin: 0 12px 12px 12px;
 }
 
-.Explorer-label {
+.ChordsExplorer-label {
   grid-row: 1;
   font-size: small;
   font-weight: bold;
 }
 
-.Explorer-list {
+.ChordsExplorer-list {
   grid-row: 2;
 }
 
-.Explorer-root {
+.ChordsExplorer-root {
   grid-area: 1;
 }
 
-.Explorer-chord-type {
+.ChordsExplorer-chord-type {
   grid-column: 2;
 }
 
-.Explorer-bass-note {
+.ChordsExplorer-bass-note {
   grid-column: 3;
 }
 
-.Explorer-chord-notes {
+.ChordsExplorer-chord-notes {
   grid-column: 3;
 
-  &.Explorer-list {
+  &.ChordsExplorer-list {
     border: 1px solid #ccc;
     padding: 6px 10px;
     font-size: small;
@@ -43,11 +43,11 @@
   }
 }
 
-.Explorer-voicings {
+.ChordsExplorer-voicings {
   grid-column: 4;
 }
 
-.Explorer-voicings-nav {
+.ChordsExplorer-voicings-nav {
   grid-area: 2 / 5;
   display: flex;
   flex-direction: column;

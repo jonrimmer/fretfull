@@ -15,6 +15,7 @@ interface Props {
   onSelect: (value: any) => void;
 }
 
+// eslint-disable-next-line react/display-name
 const Listbox = React.memo(
   ({ name, options, className, value, onSelect }: Props) => {
     const ulEl = useRef<HTMLUListElement>(null);

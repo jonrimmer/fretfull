@@ -9,7 +9,7 @@ import { Indicator, positionToGridArea } from './Fretboard';
 import { SettingsContext } from './settings-context';
 import { createVoicings, Voicing } from './voicing';
 import Listbox from './Listbox';
-import './Explorer.scss';
+import './ChordsExplorer.scss';
 import { RouteChildrenProps } from 'react-router';
 import { useDepState } from './util';
 import {
@@ -36,7 +36,7 @@ interface Params {
   chordType: string;
 }
 
-interface ExporerProps extends RouteChildrenProps<Params> {
+interface ChordsExporerProps extends RouteChildrenProps<Params> {
   content: (notes: Indicator[]) => ReactNode;
 }
 
@@ -95,11 +95,11 @@ const chordTypes: { [key: string]: (note: Note | string) => Chord } = {
 
 const chordTypeKeys = Object.keys(chordTypes);
 
-const Explorer: FC<ExporerProps> = ({
+const ChordsExplorer: FC<ChordsExporerProps> = ({
   content,
   match,
   history,
-}: ExporerProps) => {
+}: ChordsExporerProps) => {
   const { tuning, fretCount } = useContext(SettingsContext);
 
   let { chordRoot: crParam, chordType } = match
@@ -213,42 +213,48 @@ const Explorer: FC<ExporerProps> = ({
     <>
       {content(notes)}
 
-      <div className="Explorer">
-        <label className="Explorer-root Explorer-label">Root</label>
+      <div className="ChordsExplorer">
+        <label className="ChordsExplorer-root ChordsExplorer-label">Root</label>
         <Listbox
           name="chordRoot"
-          className="Explorer-chord Explorer-list"
+          className="ChordsExplorer-chord ChordsExplorer-list"
           options={ChordRoots}
           value={chordRoot}
           onSelect={selected =>
             history.push(
-              `/explore/${encodeURIComponent(selected.value)}/${chordType}`
+              `/chords/${encodeURIComponent(selected.value)}/${chordType}`
             )
           }
         />
 
-        <label className="Explorer-chord-type Explorer-label">Chord</label>
+        <label className="ChordsExplorer-chord-type ChordsExplorer-label">
+          Chord
+        </label>
         <Listbox
           name="chordType"
-          className="Explorer-chord-type Explorer-list"
+          className="ChordsExplorer-chord-type ChordsExplorer-list"
           options={chordTypeKeys}
           value={chordType}
           onSelect={selected =>
             history.push(
-              `/explore/${encodeURIComponent(chordRoot.value)}/${selected}`
+              `/chords/${encodeURIComponent(chordRoot.value)}/${selected}`
             )
           }
         />
 
-        <label className="Explorer-chord-notes Explorer-label">Notes</label>
-        <div className="Explorer-chord-notes Explorer-list">
+        <label className="ChordsExplorer-chord-notes ChordsExplorer-label">
+          Notes
+        </label>
+        <div className="ChordsExplorer-chord-notes ChordsExplorer-list">
           {chordNotes.map((n, i) => {
             const update = (e: SyntheticEvent<HTMLInputElement>) =>
               updateChordNote(i, e.currentTarget.value as ChordNoteStatus);
 
             return (
               <React.Fragment key={i}>
-                <span className="Explorer-chord-note-label">{n.label}:</span>
+                <span className="ChordsExplorer-chord-note-label">
+                  {n.label}:
+                </span>
                 <label>
                   <input
                     type="radio"
@@ -293,18 +299,18 @@ const Explorer: FC<ExporerProps> = ({
           })}
         </div>
 
-        <label className="Explorer-voicings Explorer-label">
+        <label className="ChordsExplorer-voicings ChordsExplorer-label">
           {chordVoicings.length} Voicings
         </label>
         <Listbox
           name="voicings"
-          className="Explorer-voicings Explorer-list"
+          className="ChordsExplorer-voicings ChordsExplorer-list"
           options={chordVoicings}
           value={voicing}
           onSelect={value => setVoicing(value)}
         />
 
-        <div className="Explorer-voicings-nav">
+        <div className="ChordsExplorer-voicings-nav">
           <button onClick={() => showVoicing(0)}>|&lt;</button>
           <button onClick={() => showVoicing(voicingIndex - 1)}>&lt;</button>
           <button onClick={() => showVoicing(voicingIndex + 1)}>&gt;</button>
@@ -317,4 +323,4 @@ const Explorer: FC<ExporerProps> = ({
   );
 };
 
-export default Explorer;
+export default ChordsExplorer;
