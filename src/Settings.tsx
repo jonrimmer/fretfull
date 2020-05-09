@@ -1,26 +1,23 @@
-import React, { useContext, SyntheticEvent, FC } from 'react';
-import { SettingsContext } from './settings-context';
+import React, { FC } from 'react';
 import { TUNINGS } from './music';
-import './Settings.scss';
+import { SettingsWrapper } from './Settings.styles';
+import { useSettings } from './rootStore';
 
 const Settings: FC = () => {
-  const { tuning, showOctave, update } = useContext(SettingsContext);
-
-  const handleTuningChanged = (e: SyntheticEvent<HTMLSelectElement>) => {
-    update({
-      tuning:
-        TUNINGS.find(tuning => tuning.name === e.currentTarget.value) || tuning,
-    });
-  };
+  const settings = useSettings();
 
   return (
-    <div className="Settings">
+    <SettingsWrapper>
       <label htmlFor="tuning">Tuning</label>
 
       <select
-        className="Settings-tuning"
-        value={tuning.name}
-        onChange={handleTuningChanged}
+        className="tuning"
+        value={settings.tuning.name}
+        onChange={(e) => {
+          settings.tuning =
+            TUNINGS.find((tuning) => tuning.name === e.currentTarget.value) ||
+            settings.tuning;
+        }}
         id="tuning"
       >
         {TUNINGS.map((tuning, i) => (
@@ -28,15 +25,15 @@ const Settings: FC = () => {
         ))}
       </select>
 
-      <label className="Settings-show-octave">
+      <label className="show-octave">
         <input
           type="checkbox"
-          checked={showOctave}
-          onChange={() => update({ showOctave: !showOctave })}
+          checked={settings.showOctave}
+          onChange={() => (settings.showOctave = !settings.showOctave)}
         />{' '}
         Show octave
       </label>
-    </div>
+    </SettingsWrapper>
   );
 };
 

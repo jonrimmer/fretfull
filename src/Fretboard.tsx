@@ -1,10 +1,15 @@
-import React, { useMemo, ReactNode, useContext, FC } from 'react';
+import React, { useMemo, ReactNode, FC } from 'react';
 import { tmap } from './util';
 import Fret from './Fret';
 import NoteIndicator from './NoteIndicator';
-import { SettingsContext } from './settings-context';
 import { Tuning, Note } from './music';
-import { FretboardContainer } from './Fretboard.styles';
+import {
+  FretboardContainer,
+  FretboardHead,
+  Fingerboard,
+} from './Fretboard.styles';
+import { observer } from 'mobx-react-lite';
+import { useSettings } from './rootStore';
 
 const headSize = 100;
 
@@ -65,25 +70,19 @@ export interface Indicator {
 interface FretboardProps {
   children?: ReactNode;
   fretCount: number;
-  tuning: Tuning;
   notes: Indicator[];
 }
 
-const Fretboard: FC<FretboardProps> = ({
-  children,
-  fretCount,
-  tuning,
-  notes,
-}) => {
+const Fretboard: FC<FretboardProps> = ({ children, fretCount, notes }) => {
+  const settings = useSettings();
+
   const [fretSizes, columns] = useMemo<[number[], string]>(() => {
     const frets = computeFretSizes(fretCount);
 
     return [frets, gridColumns(frets)];
   }, [fretCount]);
 
-  const { showOctave } = useContext(SettingsContext);
-
-  const rows = useMemo(() => gridRows(tuning), [tuning]);
+  const rows = useMemo(() => gridRows(settings.tuning), [settings.tuning]);
 
   return (
     <FretboardContainer
@@ -92,25 +91,15 @@ const Fretboard: FC<FretboardProps> = ({
         gridTemplateRows: rows,
       }}
     >
-      <div
-        className="head"
-        style={{
-          gridArea: `top-edge / head / bottom-edge / nut`,
-        }}
-      ></div>
-      <div
-        className="fingerboard"
-        style={{
-          gridArea: `top-edge / nut / bottom-edge / fretboard-end`,
-        }}
-      ></div>
+      <FretboardHead />
+      <Fingerboard />
 
       {children}
 
       {notes.map((note, i) => (
         <NoteIndicator
           key={'note_' + i}
-          showOctave={showOctave}
+          showOctave={settings.showOctave}
           {...note}
         ></NoteIndicator>
       ))}
@@ -122,4 +111,4 @@ const Fretboard: FC<FretboardProps> = ({
   );
 };
 
-export default Fretboard;
+export default observer(Fretboard);

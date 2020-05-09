@@ -1,6 +1,5 @@
 import React, { useRef, KeyboardEvent, useEffect } from 'react';
-import './Listbox.scss';
-import cn from 'classnames';
+import { ListboxWrapper, ListboxOption } from './Listbox.styles';
 
 export interface Option {
   label: string;
@@ -13,11 +12,11 @@ interface Props {
   className?: string;
   value: any;
   onSelect: (value: any) => void;
+  id: string;
 }
 
-// eslint-disable-next-line react/display-name
 const Listbox = React.memo(
-  ({ name, options, className, value, onSelect }: Props) => {
+  ({ name, options, className, value, onSelect, id }: Props) => {
     const ulEl = useRef<HTMLUListElement>(null);
     const selectedOptionIndex = options.findIndex(option => option === value);
     const activeDescendant =
@@ -95,9 +94,9 @@ const Listbox = React.memo(
     }
 
     return (
-      <ul
+      <ListboxWrapper
         ref={ulEl}
-        className={cn('Listbox', className)}
+        className={className}
         role="listbox"
         onFocus={setupFocus}
         onKeyDown={checkKeyPress}
@@ -105,20 +104,18 @@ const Listbox = React.memo(
         aria-activedescendant={activeDescendant}
       >
         {options.map((o, i) => (
-          <li
-            key={i}
+          <ListboxOption
+            key={`${id}-${o}`}
             id={name + '_opt' + i}
-            className={cn('Listbox-item', {
-              selected: value === o,
-            })}
+            selected={value === o}
             role="option"
             aria-selected={value === 0}
             onClick={() => onSelect(o)}
           >
-            {o.toString()}
-          </li>
+            {`${o}`}
+          </ListboxOption>
         ))}
-      </ul>
+      </ListboxWrapper>
     );
   }
 );

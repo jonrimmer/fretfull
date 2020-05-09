@@ -1,6 +1,7 @@
-import React, { Fragment, useContext, FC } from 'react';
-import { SettingsContext } from './settings-context';
-import './GuitarStrings.scss';
+import React, { Fragment, FC } from 'react';
+import { GuitarString, RootNote } from './GuitarStrings.styles';
+import { observer } from 'mobx-react-lite';
+import { useSettings } from './rootStore';
 
 const MAX_STRING_WIDTH = 3;
 
@@ -9,38 +10,37 @@ interface GuitarStringProps {
   onToggle: (num: number) => void;
 }
 
-const GuitarString: FC<GuitarStringProps> = ({ activeStrings, onToggle }) => {
-  const { tuning } = useContext(SettingsContext);
+export const GuitarStrings: FC<GuitarStringProps> = ({
+  activeStrings,
+  onToggle,
+}) => {
+  const settings = useSettings();
 
   return (
     <>
-      {tuning.notes.map((rootNote, num, { length }) => {
+      {settings.tuning.notes.map((rootNote, num, { length }) => {
         const width = Math.max(
           1,
           Math.round(((length - (num + 1)) / length) * MAX_STRING_WIDTH)
         );
         return (
           <Fragment key={num}>
-            <div
+            <RootNote
               onClick={() => onToggle(num)}
-              className={
-                'GuitarStrings-root-note ' +
-                (activeStrings[num] ? 'included' : 'excluded')
-              }
+              className={activeStrings[num] ? 'included' : 'excluded'}
               style={{
                 gridArea: `s${num + 1} / fretboard-end`,
               }}
             >
               {rootNote.tone}
-            </div>
-            <div
-              className="GuitarStrings-string"
+            </RootNote>
+            <GuitarString
               style={{
                 height: '50%',
                 gridArea: `s${num} / head / s${num + 1} / fretboard-end`,
                 borderBottom: `${width}px solid yellow`,
               }}
-            ></div>
+            ></GuitarString>
           </Fragment>
         );
       })}
@@ -48,4 +48,4 @@ const GuitarString: FC<GuitarStringProps> = ({ activeStrings, onToggle }) => {
   );
 };
 
-export default GuitarString;
+export default observer(GuitarStrings);

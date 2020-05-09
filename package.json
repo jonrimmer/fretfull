@@ -13,6 +13,8 @@
     "classnames": "2.2.6",
     "fsevents": "2.1.2",
     "gh-pages": "2.2.0",
+    "mobx": "^5.15.4",
+    "mobx-react-lite": "^2.0.6",
     "node-sass": "4.13.1",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",

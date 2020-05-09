@@ -39,7 +39,7 @@ export class Voicing {
   private strValue: string;
 
   constructor(public notes: VoicingNotes, public bassNote: Note) {
-    const unmuted = notes.filter(n => n !== null) as number[];
+    const unmuted = notes.filter((n) => n !== null) as number[];
     this.minFret = Math.min(...unmuted);
     this.maxFret = Math.max(...unmuted);
     this.distance = notes.reduce<number>(
@@ -47,7 +47,7 @@ export class Voicing {
       0
     );
     this.notes = notes;
-    this.strValue = this.notes.map(n => (n === null ? 'x' : n)).join(' ');
+    this.strValue = this.notes.map((n) => (n === null ? 'x' : n)).join(' ');
   }
 
   toString() {
@@ -71,8 +71,12 @@ export function createVoicings(
 ): Voicing[] {
   const result: Voicing[] = [];
 
+  if (required.length === 0 && optional.length === 0) {
+    return [];
+  }
+
   function addCurrent(current: VoicingNotes) {
-    const bassNoteIndex = current.findIndex(n => n !== null) as number;
+    const bassNoteIndex = current.findIndex((n) => n !== null) as number;
     const bassNote = addSemitones(
       tuning.notes[bassNoteIndex],
       current[bassNoteIndex] as number
@@ -97,7 +101,7 @@ export function createVoicings(
     }
 
     const [openNote, ...remaining] = openNotes;
-    const unmuted = current.filter(n => n !== null) as number[];
+    const unmuted = current.filter((n) => n !== null) as number[];
     const min = Math.min(...unmuted);
     const max = Math.max(...unmuted);
 
@@ -129,7 +133,7 @@ export function createVoicings(
       // It's still possible to include repeated and optional notes / mutes
       // while placing all unplaced required notes.
 
-      [...placed, ...optional].forEach(n => {
+      [...placed, ...optional].forEach((n) => {
         const start = interval(openNote, n.toString());
 
         for (let i = start; i < fretCount + 1; i += 12) {

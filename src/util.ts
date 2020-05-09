@@ -1,5 +1,3 @@
-import { useState, useMemo, Dispatch, SetStateAction } from 'react';
-
 export function newBoolArray(len: number, val = true): boolean[] {
   const result = [];
 
@@ -42,23 +40,4 @@ export function isStringArray(value: any): value is string[] {
   }
 
   return false;
-}
-
-export function useDepState<S>(
-  factory: (prevState?: S) => S,
-  inputs: ReadonlyArray<any>
-): [S, Dispatch<SetStateAction<S>>] {
-  let [state, setState] = useState<S>(factory());
-
-  useMemo(() => {
-    let newState = factory(state);
-
-    if (newState !== state) {
-      setState((state = newState));
-    }
-
-    return state;
-  }, inputs);
-
-  return [state, setState];
 }

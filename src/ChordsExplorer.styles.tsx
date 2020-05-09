@@ -3,9 +3,9 @@ import styled from 'styled-components';
 export const ChordsExplorerContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1.2fr 1fr auto;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto minmax(0, 1fr);
   grid-gap: 12px;
-  margin: 0 12px 12px 12px;
+  padding: 0 12px 12px 12px;
 
   .label {
     grid-row: 1;

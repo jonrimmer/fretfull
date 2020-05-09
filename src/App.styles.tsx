@@ -11,7 +11,7 @@ export const AppContainer = styled.div`
     'header'
     'fretboard'
     'content';
-  grid-template-rows: auto auto 1fr;
+  grid-template-rows: auto auto minmax(0, 1fr);
   grid-template-columns: 1fr;
   grid-gap: 24px;
 

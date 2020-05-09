@@ -1,15 +1,15 @@
-import React, {
-  ReactNode,
-  useState,
-  SyntheticEvent,
-  useContext,
-  FC,
-} from 'react';
+import React, { ReactNode, useState, SyntheticEvent, FC } from 'react';
 import { Indicator, positionToGridArea } from './Fretboard';
 import { getRandomInt } from './util';
-import { SettingsContext } from './settings-context';
 import { toneEquals } from './music';
-import './Quiz.scss';
+import {
+  QuizQuestion,
+  AnswerField,
+  Judgement,
+  QuizWrapper,
+} from './Quiz.styles';
+import { observer } from 'mobx-react-lite';
+import { useSettings } from './rootStore';
 
 interface Judgement {
   correct: boolean;
@@ -42,25 +42,27 @@ const computeRandomQuestion = (
 };
 
 interface QuizProps {
-  content: (notes: Indicator[]) => ReactNode;
+  children: (notes: Indicator[]) => ReactNode;
   includedStrings: boolean[];
 }
 
-const Quiz: FC<QuizProps> = ({ content, includedStrings }) => {
-  const { fretCount, tuning } = useContext(SettingsContext);
-
+const Quiz: FC<QuizProps> = ({ children, includedStrings }) => {
+  const settings = useSettings();
   const [answer, setAnswer] = useState('');
   const [judgement, setJudgement] = useState<Judgement | null>(null);
   const [question, setQuestion] = useState(() =>
-    computeRandomQuestion(includedStrings, fretCount)
+    computeRandomQuestion(includedStrings, settings.fretCount)
   );
 
   const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
     // Done late in case the tuning has changed.
-    const solution = tuning.positionToNote(question.string, question.fret);
+    const solution = settings.tuning.positionToNote(
+      question.string,
+      question.fret
+    );
 
     if (toneEquals(answer, solution.toString())) {
-      setQuestion(computeRandomQuestion(includedStrings, fretCount));
+      setQuestion(computeRandomQuestion(includedStrings, settings.fretCount));
 
       setJudgement({
         correct: true,
@@ -79,12 +81,12 @@ const Quiz: FC<QuizProps> = ({ content, includedStrings }) => {
   };
 
   if (!includedStrings[question.string]) {
-    setQuestion(computeRandomQuestion(includedStrings, fretCount));
+    setQuestion(computeRandomQuestion(includedStrings, settings.fretCount));
   }
 
   const notes: Indicator[] = [
     {
-      note: tuning.positionToNote(question.string, question.fret),
+      note: settings.tuning.positionToNote(question.string, question.fret),
       type: 'quiz',
       gridArea: positionToGridArea(question.string, question.fret),
     },
@@ -92,31 +94,24 @@ const Quiz: FC<QuizProps> = ({ content, includedStrings }) => {
 
   return (
     <>
-      {content(notes)}
-      <div className="Quiz">
-        <form className="Quiz-question" onSubmit={event => handleSubmit(event)}>
+      {children(notes)}
+      <QuizWrapper>
+        <QuizQuestion onSubmit={(event) => handleSubmit(event)}>
           <h1>What is the higlighted note?</h1>
-          <input
-            className="Quiz-answer-field"
+          <AnswerField
             type="text"
             value={answer}
-            onChange={event => setAnswer(event.target.value)}
+            onChange={(event) => setAnswer(event.target.value)}
           />
           {judgement ? (
-            <div
-              className={
-                'Quiz-judgement ' +
-                (judgement.correct ? 'correct' : 'incorrect')
-              }
-              key={judgement.id}
-            >
+            <Judgement correct={judgement.correct} key={judgement.id}>
               {judgement.correct ? 'Correct' : 'Incorrect'}
-            </div>
+            </Judgement>
           ) : null}
-        </form>
-      </div>
+        </QuizQuestion>
+      </QuizWrapper>
     </>
   );
 };
 
-export default Quiz;
+export default observer(Quiz);

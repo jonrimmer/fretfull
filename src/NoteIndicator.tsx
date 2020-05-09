@@ -1,16 +1,11 @@
 import React, { FC } from 'react';
-import './Note.css';
 import { Note } from './music';
-
-const typeClass = {
-  quiz: 'Note-quiz',
-  indicator: 'Note-indicator',
-  chordRoot: 'Note-chord-root',
-};
+import { NoteIndicatorType } from './model';
+import { NoteIndicatorWrapper } from './NoteIndicator.styles';
 
 interface NoteIndicatorProps {
   note: Note;
-  type: keyof typeof typeClass;
+  type: NoteIndicatorType;
   showOctave: boolean;
   gridArea: string;
 }
@@ -36,9 +31,9 @@ const NoteIndicator: FC<NoteIndicatorProps> = ({
   }
 
   return (
-    <div className={'Note ' + typeClass[type]} style={{ gridArea: gridArea }}>
+    <NoteIndicatorWrapper type={type} style={{ gridArea: gridArea }}>
       {label}
-    </div>
+    </NoteIndicatorWrapper>
   );
 };
 
