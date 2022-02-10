@@ -15,7 +15,7 @@
     "gh-pages": "2.2.0",
     "mobx": "^5.15.4",
     "mobx-react-lite": "^2.0.6",
-    "node-sass": "4.13.1",
+    "node-sass": "7.0.0",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-router-dom": "5.1.2",
